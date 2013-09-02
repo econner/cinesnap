@@ -2,6 +2,7 @@ cinesnap
 ========
 
 Wishlist
+--------
 
 Major features
 
