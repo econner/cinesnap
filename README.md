@@ -1,6 +1,8 @@
 cinesnap
 ========
 
+A new way to create cool videos, Cinesnap condenses long or expands short videos to the interval you specify.
+
 Wishlist
 --------
 
