@@ -7,6 +7,12 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		0770FB5317D4E8890033B980 /* AVCamCaptureManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 0770FB5217D4E8890033B980 /* AVCamCaptureManager.m */; };
+		0770FB5417D4E8890033B980 /* AVCamCaptureManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 0770FB5217D4E8890033B980 /* AVCamCaptureManager.m */; };
+		0770FB5917D4ED500033B980 /* AVCamRecorder.m in Sources */ = {isa = PBXBuildFile; fileRef = 0770FB5617D4ED500033B980 /* AVCamRecorder.m */; };
+		0770FB5A17D4ED500033B980 /* AVCamRecorder.m in Sources */ = {isa = PBXBuildFile; fileRef = 0770FB5617D4ED500033B980 /* AVCamRecorder.m */; };
+		0770FB5B17D4ED500033B980 /* AVCamUtilities.m in Sources */ = {isa = PBXBuildFile; fileRef = 0770FB5817D4ED500033B980 /* AVCamUtilities.m */; };
+		0770FB5C17D4ED500033B980 /* AVCamUtilities.m in Sources */ = {isa = PBXBuildFile; fileRef = 0770FB5817D4ED500033B980 /* AVCamUtilities.m */; };
 		07BA3DAE17D4559D00C562BE /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 07BA3DAD17D4559D00C562BE /* UIKit.framework */; };
 		07BA3DB017D4559D00C562BE /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 07BA3DAF17D4559D00C562BE /* Foundation.framework */; };
 		07BA3DB217D4559D00C562BE /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 07BA3DB117D4559D00C562BE /* CoreGraphics.framework */; };
@@ -24,6 +30,12 @@
 		07BA3DD717D4559E00C562BE /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 07BA3DAF17D4559D00C562BE /* Foundation.framework */; };
 		07BA3DDF17D4559E00C562BE /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 07BA3DDD17D4559E00C562BE /* InfoPlist.strings */; };
 		07BA3DE217D4559E00C562BE /* CinesnapTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 07BA3DE117D4559E00C562BE /* CinesnapTests.m */; };
+		07BA3DEC17D455CA00C562BE /* AssetsLibrary.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 07BA3DEB17D455CA00C562BE /* AssetsLibrary.framework */; };
+		07BA3DEE17D455D100C562BE /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 07BA3DED17D455D100C562BE /* AVFoundation.framework */; };
+		07BA3DF017D455DA00C562BE /* CoreMedia.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 07BA3DEF17D455DA00C562BE /* CoreMedia.framework */; };
+		07BA3DF217D455E400C562BE /* MediaPlayer.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 07BA3DF117D455E400C562BE /* MediaPlayer.framework */; };
+		07BA3DF417D455EC00C562BE /* MobileCoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 07BA3DF317D455EC00C562BE /* MobileCoreServices.framework */; };
+		07BA3DF617D455F700C562BE /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 07BA3DF517D455F700C562BE /* QuartzCore.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -37,6 +49,12 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		0770FB5117D4E8890033B980 /* AVCamCaptureManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AVCamCaptureManager.h; sourceTree = "<group>"; };
+		0770FB5217D4E8890033B980 /* AVCamCaptureManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AVCamCaptureManager.m; sourceTree = "<group>"; };
+		0770FB5517D4ED500033B980 /* AVCamRecorder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AVCamRecorder.h; sourceTree = "<group>"; };
+		0770FB5617D4ED500033B980 /* AVCamRecorder.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AVCamRecorder.m; sourceTree = "<group>"; };
+		0770FB5717D4ED500033B980 /* AVCamUtilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AVCamUtilities.h; sourceTree = "<group>"; };
+		0770FB5817D4ED500033B980 /* AVCamUtilities.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AVCamUtilities.m; sourceTree = "<group>"; };
 		07BA3DAA17D4559D00C562BE /* Cinesnap.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Cinesnap.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		07BA3DAD17D4559D00C562BE /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		07BA3DAF17D4559D00C562BE /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -60,6 +78,12 @@
 		07BA3DDE17D4559E00C562BE /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		07BA3DE017D4559E00C562BE /* CinesnapTests.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CinesnapTests.h; sourceTree = "<group>"; };
 		07BA3DE117D4559E00C562BE /* CinesnapTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CinesnapTests.m; sourceTree = "<group>"; };
+		07BA3DEB17D455CA00C562BE /* AssetsLibrary.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AssetsLibrary.framework; path = System/Library/Frameworks/AssetsLibrary.framework; sourceTree = SDKROOT; };
+		07BA3DED17D455D100C562BE /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
+		07BA3DEF17D455DA00C562BE /* CoreMedia.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreMedia.framework; path = System/Library/Frameworks/CoreMedia.framework; sourceTree = SDKROOT; };
+		07BA3DF117D455E400C562BE /* MediaPlayer.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MediaPlayer.framework; path = System/Library/Frameworks/MediaPlayer.framework; sourceTree = SDKROOT; };
+		07BA3DF317D455EC00C562BE /* MobileCoreServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MobileCoreServices.framework; path = System/Library/Frameworks/MobileCoreServices.framework; sourceTree = SDKROOT; };
+		07BA3DF517D455F700C562BE /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -67,6 +91,12 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				07BA3DF617D455F700C562BE /* QuartzCore.framework in Frameworks */,
+				07BA3DF417D455EC00C562BE /* MobileCoreServices.framework in Frameworks */,
+				07BA3DF217D455E400C562BE /* MediaPlayer.framework in Frameworks */,
+				07BA3DF017D455DA00C562BE /* CoreMedia.framework in Frameworks */,
+				07BA3DEE17D455D100C562BE /* AVFoundation.framework in Frameworks */,
+				07BA3DEC17D455CA00C562BE /* AssetsLibrary.framework in Frameworks */,
 				07BA3DAE17D4559D00C562BE /* UIKit.framework in Frameworks */,
 				07BA3DB017D4559D00C562BE /* Foundation.framework in Frameworks */,
 				07BA3DB217D4559D00C562BE /* CoreGraphics.framework in Frameworks */,
@@ -89,6 +119,12 @@
 		07BA3DA117D4559D00C562BE = {
 			isa = PBXGroup;
 			children = (
+				07BA3DF517D455F700C562BE /* QuartzCore.framework */,
+				07BA3DF317D455EC00C562BE /* MobileCoreServices.framework */,
+				07BA3DF117D455E400C562BE /* MediaPlayer.framework */,
+				07BA3DEF17D455DA00C562BE /* CoreMedia.framework */,
+				07BA3DED17D455D100C562BE /* AVFoundation.framework */,
+				07BA3DEB17D455CA00C562BE /* AssetsLibrary.framework */,
 				07BA3DB317D4559D00C562BE /* Cinesnap */,
 				07BA3DDA17D4559E00C562BE /* CinesnapTests */,
 				07BA3DAC17D4559D00C562BE /* Frameworks */,
@@ -119,6 +155,12 @@
 		07BA3DB317D4559D00C562BE /* Cinesnap */ = {
 			isa = PBXGroup;
 			children = (
+				0770FB5517D4ED500033B980 /* AVCamRecorder.h */,
+				0770FB5617D4ED500033B980 /* AVCamRecorder.m */,
+				0770FB5717D4ED500033B980 /* AVCamUtilities.h */,
+				0770FB5817D4ED500033B980 /* AVCamUtilities.m */,
+				0770FB5117D4E8890033B980 /* AVCamCaptureManager.h */,
+				0770FB5217D4E8890033B980 /* AVCamCaptureManager.m */,
 				07BA3DBC17D4559D00C562BE /* AppDelegate.h */,
 				07BA3DBD17D4559D00C562BE /* AppDelegate.m */,
 				07BA3DC517D4559D00C562BE /* MainStoryboard_iPhone.storyboard */,
@@ -277,6 +319,9 @@
 				07BA3DBA17D4559D00C562BE /* main.m in Sources */,
 				07BA3DBE17D4559D00C562BE /* AppDelegate.m in Sources */,
 				07BA3DCD17D4559E00C562BE /* ViewController.m in Sources */,
+				0770FB5317D4E8890033B980 /* AVCamCaptureManager.m in Sources */,
+				0770FB5917D4ED500033B980 /* AVCamRecorder.m in Sources */,
+				0770FB5B17D4ED500033B980 /* AVCamUtilities.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -285,6 +330,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				07BA3DE217D4559E00C562BE /* CinesnapTests.m in Sources */,
+				0770FB5417D4E8890033B980 /* AVCamCaptureManager.m in Sources */,
+				0770FB5A17D4ED500033B980 /* AVCamRecorder.m in Sources */,
+				0770FB5C17D4ED500033B980 /* AVCamUtilities.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -467,6 +515,7 @@
 				07BA3DE717D4559E00C562BE /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		07BA3DE817D4559E00C562BE /* Build configuration list for PBXNativeTarget "CinesnapTests" */ = {
 			isa = XCConfigurationList;
@@ -475,6 +524,7 @@
 				07BA3DEA17D4559E00C562BE /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
