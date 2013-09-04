@@ -492,26 +492,74 @@ bail:
 		if ([[self delegate] respondsToSelector:@selector(captureManagerRecordingFinished:)]) {
 			[[self delegate] captureManagerRecordingFinished:self];
 		}
-	}
-	else {	
-		ALAssetsLibrary *library = [[ALAssetsLibrary alloc] init];
-		[library writeVideoAtPathToSavedPhotosAlbum:outputFileURL
-									completionBlock:^(NSURL *assetURL, NSError *error) {
-										if (error) {
-											if ([[self delegate] respondsToSelector:@selector(captureManager:didFailWithError:)]) {
-												[[self delegate] captureManager:self didFailWithError:error];
-											}											
-										}
-										
-										if ([[UIDevice currentDevice] isMultitaskingSupported]) {
-											[[UIApplication sharedApplication] endBackgroundTask:[self backgroundRecordingID]];
-										}
-										
-										if ([[self delegate] respondsToSelector:@selector(captureManagerRecordingFinished:)]) {
-											[[self delegate] captureManagerRecordingFinished:self];
-										}
-									}];
-	}
+	} else {	
+
+        AVURLAsset* videoAsset = [[AVURLAsset alloc] initWithURL:outputFileURL options:NULL];
+        
+        //create mutable composition
+        AVMutableComposition *mixComposition = [AVMutableComposition composition];
+        
+        AVMutableCompositionTrack *compositionVideoTrack = [mixComposition addMutableTrackWithMediaType:AVMediaTypeVideo
+                                                                                       preferredTrackID:kCMPersistentTrackID_Invalid];
+        NSError *videoInsertError = nil;
+        BOOL videoInsertResult = [compositionVideoTrack insertTimeRange:CMTimeRangeMake(kCMTimeZero, videoAsset.duration)
+                                                                ofTrack:[[videoAsset tracksWithMediaType:AVMediaTypeVideo] objectAtIndex:0]
+                                                                 atTime:kCMTimeZero
+                                                                  error:&videoInsertError];
+        if (!videoInsertResult || nil != videoInsertError) {
+            //handle error
+            return;
+        }
+        
+        //slow down whole video by 2.0
+        double videoScaleFactor = 5.0;
+        CMTime videoDuration = videoAsset.duration;
+        
+        [compositionVideoTrack scaleTimeRange:CMTimeRangeMake(kCMTimeZero, videoDuration)
+                                   toDuration:CMTimeMake(videoDuration.value*videoScaleFactor, videoDuration.timescale)];
+        
+        //export
+        AVAssetExportSession* exportSession = [[AVAssetExportSession alloc] initWithAsset:mixComposition
+                                                                             presetName:AVAssetExportPresetHighestQuality];
+        
+        NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
+        NSString *documentsDirectory = [paths objectAtIndex:0];
+        NSString *myPathDocs =  [documentsDirectory stringByAppendingPathComponent:
+                                 [NSString stringWithFormat:@"mergeVideo-%d.mov",arc4random() % 1000]];
+        NSURL *exportUrl = [NSURL fileURLWithPath:myPathDocs];
+        
+        [exportSession setOutputURL:exportUrl];
+        [exportSession setOutputFileType:AVFileTypeQuickTimeMovie];
+        
+        ALAssetsLibrary *library = [[ALAssetsLibrary alloc] init];
+        
+        [exportSession exportAsynchronouslyWithCompletionHandler:^ {
+//            switch ([exportSession status]) {
+//                case AVAssetExportSessionStatusFailed:
+//                    NSLog(@"Export session faied with error: %@", [exportSession error]);
+//                    break;
+//                default:
+//                    break;
+//            }
+            [library writeVideoAtPathToSavedPhotosAlbum:exportUrl
+                                        completionBlock:^(NSURL *assetURL, NSError *error) {
+                                            if (error) {
+                                                if ([[self delegate] respondsToSelector:@selector(captureManager:didFailWithError:)]) {
+                                                    [[self delegate] captureManager:self didFailWithError:error];
+                                                }
+                                            }
+                                            
+                                            if ([[UIDevice currentDevice] isMultitaskingSupported]) {
+                                                [[UIApplication sharedApplication] endBackgroundTask:[self backgroundRecordingID]];
+                                            }
+                                            
+                                            if ([[self delegate] respondsToSelector:@selector(captureManagerRecordingFinished:)]) {
+                                                [[self delegate] captureManagerRecordingFinished:self];
+                                            }
+                                        }];
+
+        }];
+    }
 }
 
 @end
