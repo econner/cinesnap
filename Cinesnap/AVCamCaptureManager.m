@@ -477,6 +477,26 @@ bail:
     }
 }
 
++(NSString *)generateTempFilePath
+{
+    NSString *tempDirectoryTemplate = [NSTemporaryDirectory() stringByAppendingPathComponent:@"tempdir.XXXXXX"];
+    const char *tempDirectoryTemplateCString = [tempDirectoryTemplate fileSystemRepresentation];
+    char *tempDirectoryNameCString = (char *)malloc(strlen(tempDirectoryTemplateCString) + 1);
+    strcpy(tempDirectoryNameCString, tempDirectoryTemplateCString);
+    
+    char *result = mkdtemp(tempDirectoryNameCString);
+    if (!result)
+    {
+        // handle directory creation failure
+    }
+    
+    NSString *tempDirectoryPath = [[NSFileManager defaultManager] stringWithFileSystemRepresentation:tempDirectoryNameCString
+                                                                                              length:strlen(result)];
+    free(tempDirectoryNameCString);
+    
+    return [tempDirectoryPath stringByAppendingPathComponent:@"temp.mov"];
+}
+
 -(void)recorder:(AVCamRecorder *)recorder recordingDidFinishToOutputFileURL:(NSURL *)outputFileURL error:(NSError *)error
 {
 	if ([[self recorder] recordsAudio] && ![[self recorder] recordsVideo]) {
@@ -521,12 +541,9 @@ bail:
         //export
         AVAssetExportSession* exportSession = [[AVAssetExportSession alloc] initWithAsset:mixComposition
                                                                              presetName:AVAssetExportPresetHighestQuality];
+
         
-        NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
-        NSString *documentsDirectory = [paths objectAtIndex:0];
-        NSString *myPathDocs =  [documentsDirectory stringByAppendingPathComponent:
-                                 [NSString stringWithFormat:@"mergeVideo-%d.mov",arc4random() % 1000]];
-        NSURL *exportUrl = [NSURL fileURLWithPath:myPathDocs];
+        NSURL *exportUrl = [NSURL fileURLWithPath:[AVCamCaptureManager generateTempFilePath]];
         
         [exportSession setOutputURL:exportUrl];
         [exportSession setOutputFileType:AVFileTypeQuickTimeMovie];
@@ -556,6 +573,8 @@ bail:
                                             if ([[self delegate] respondsToSelector:@selector(captureManagerRecordingFinished:)]) {
                                                 [[self delegate] captureManagerRecordingFinished:self];
                                             }
+                                            
+                                            [[NSFileManager defaultManager] removeItemAtURL:exportUrl error:&error];
                                         }];
 
         }];
