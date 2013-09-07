@@ -58,7 +58,6 @@
 @property (nonatomic,assign) AVCaptureVideoOrientation orientation;
 @property (nonatomic,retain) AVCaptureDeviceInput *videoInput;
 @property (nonatomic,retain) AVCaptureDeviceInput *audioInput;
-@property (nonatomic,retain) AVCaptureStillImageOutput *stillImageOutput;
 @property (nonatomic,retain) AVCamRecorder *recorder;
 @property (nonatomic,assign) id deviceConnectedObserver;
 @property (nonatomic,assign) id deviceDisconnectedObserver;

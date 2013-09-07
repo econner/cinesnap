@@ -11,8 +11,6 @@
 		0770FB5417D4E8890033B980 /* AVCamCaptureManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 0770FB5217D4E8890033B980 /* AVCamCaptureManager.m */; };
 		0770FB5917D4ED500033B980 /* AVCamRecorder.m in Sources */ = {isa = PBXBuildFile; fileRef = 0770FB5617D4ED500033B980 /* AVCamRecorder.m */; };
 		0770FB5A17D4ED500033B980 /* AVCamRecorder.m in Sources */ = {isa = PBXBuildFile; fileRef = 0770FB5617D4ED500033B980 /* AVCamRecorder.m */; };
-		0770FB5B17D4ED500033B980 /* AVCamUtilities.m in Sources */ = {isa = PBXBuildFile; fileRef = 0770FB5817D4ED500033B980 /* AVCamUtilities.m */; };
-		0770FB5C17D4ED500033B980 /* AVCamUtilities.m in Sources */ = {isa = PBXBuildFile; fileRef = 0770FB5817D4ED500033B980 /* AVCamUtilities.m */; };
 		07BA3DAE17D4559D00C562BE /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 07BA3DAD17D4559D00C562BE /* UIKit.framework */; };
 		07BA3DB017D4559D00C562BE /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 07BA3DAF17D4559D00C562BE /* Foundation.framework */; };
 		07BA3DB217D4559D00C562BE /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 07BA3DB117D4559D00C562BE /* CoreGraphics.framework */; };
@@ -22,8 +20,6 @@
 		07BA3DC017D4559D00C562BE /* Default.png in Resources */ = {isa = PBXBuildFile; fileRef = 07BA3DBF17D4559D00C562BE /* Default.png */; };
 		07BA3DC217D4559D00C562BE /* Default@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 07BA3DC117D4559D00C562BE /* Default@2x.png */; };
 		07BA3DC417D4559D00C562BE /* Default-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 07BA3DC317D4559D00C562BE /* Default-568h@2x.png */; };
-		07BA3DC717D4559D00C562BE /* MainStoryboard_iPhone.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 07BA3DC517D4559D00C562BE /* MainStoryboard_iPhone.storyboard */; };
-		07BA3DCA17D4559D00C562BE /* MainStoryboard_iPad.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 07BA3DC817D4559D00C562BE /* MainStoryboard_iPad.storyboard */; };
 		07BA3DCD17D4559E00C562BE /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 07BA3DCC17D4559E00C562BE /* ViewController.m */; };
 		07BA3DD517D4559E00C562BE /* SenTestingKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 07BA3DD417D4559E00C562BE /* SenTestingKit.framework */; };
 		07BA3DD617D4559E00C562BE /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 07BA3DAD17D4559D00C562BE /* UIKit.framework */; };
@@ -53,8 +49,6 @@
 		0770FB5217D4E8890033B980 /* AVCamCaptureManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AVCamCaptureManager.m; sourceTree = "<group>"; };
 		0770FB5517D4ED500033B980 /* AVCamRecorder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AVCamRecorder.h; sourceTree = "<group>"; };
 		0770FB5617D4ED500033B980 /* AVCamRecorder.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AVCamRecorder.m; sourceTree = "<group>"; };
-		0770FB5717D4ED500033B980 /* AVCamUtilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AVCamUtilities.h; sourceTree = "<group>"; };
-		0770FB5817D4ED500033B980 /* AVCamUtilities.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AVCamUtilities.m; sourceTree = "<group>"; };
 		07BA3DAA17D4559D00C562BE /* Cinesnap.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Cinesnap.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		07BA3DAD17D4559D00C562BE /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		07BA3DAF17D4559D00C562BE /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -68,8 +62,6 @@
 		07BA3DBF17D4559D00C562BE /* Default.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Default.png; sourceTree = "<group>"; };
 		07BA3DC117D4559D00C562BE /* Default@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default@2x.png"; sourceTree = "<group>"; };
 		07BA3DC317D4559D00C562BE /* Default-568h@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default-568h@2x.png"; sourceTree = "<group>"; };
-		07BA3DC617D4559D00C562BE /* en */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = en; path = en.lproj/MainStoryboard_iPhone.storyboard; sourceTree = "<group>"; };
-		07BA3DC917D4559D00C562BE /* en */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = en; path = en.lproj/MainStoryboard_iPad.storyboard; sourceTree = "<group>"; };
 		07BA3DCB17D4559E00C562BE /* ViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ViewController.h; sourceTree = "<group>"; };
 		07BA3DCC17D4559E00C562BE /* ViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ViewController.m; sourceTree = "<group>"; };
 		07BA3DD317D4559E00C562BE /* CinesnapTests.octest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = CinesnapTests.octest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -157,14 +149,10 @@
 			children = (
 				0770FB5517D4ED500033B980 /* AVCamRecorder.h */,
 				0770FB5617D4ED500033B980 /* AVCamRecorder.m */,
-				0770FB5717D4ED500033B980 /* AVCamUtilities.h */,
-				0770FB5817D4ED500033B980 /* AVCamUtilities.m */,
 				0770FB5117D4E8890033B980 /* AVCamCaptureManager.h */,
 				0770FB5217D4E8890033B980 /* AVCamCaptureManager.m */,
 				07BA3DBC17D4559D00C562BE /* AppDelegate.h */,
 				07BA3DBD17D4559D00C562BE /* AppDelegate.m */,
-				07BA3DC517D4559D00C562BE /* MainStoryboard_iPhone.storyboard */,
-				07BA3DC817D4559D00C562BE /* MainStoryboard_iPad.storyboard */,
 				07BA3DCB17D4559E00C562BE /* ViewController.h */,
 				07BA3DCC17D4559E00C562BE /* ViewController.m */,
 				07BA3DB417D4559D00C562BE /* Supporting Files */,
@@ -280,8 +268,6 @@
 				07BA3DC017D4559D00C562BE /* Default.png in Resources */,
 				07BA3DC217D4559D00C562BE /* Default@2x.png in Resources */,
 				07BA3DC417D4559D00C562BE /* Default-568h@2x.png in Resources */,
-				07BA3DC717D4559D00C562BE /* MainStoryboard_iPhone.storyboard in Resources */,
-				07BA3DCA17D4559D00C562BE /* MainStoryboard_iPad.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -321,7 +307,6 @@
 				07BA3DCD17D4559E00C562BE /* ViewController.m in Sources */,
 				0770FB5317D4E8890033B980 /* AVCamCaptureManager.m in Sources */,
 				0770FB5917D4ED500033B980 /* AVCamRecorder.m in Sources */,
-				0770FB5B17D4ED500033B980 /* AVCamUtilities.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -332,7 +317,6 @@
 				07BA3DE217D4559E00C562BE /* CinesnapTests.m in Sources */,
 				0770FB5417D4E8890033B980 /* AVCamCaptureManager.m in Sources */,
 				0770FB5A17D4ED500033B980 /* AVCamRecorder.m in Sources */,
-				0770FB5C17D4ED500033B980 /* AVCamUtilities.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -353,22 +337,6 @@
 				07BA3DB717D4559D00C562BE /* en */,
 			);
 			name = InfoPlist.strings;
-			sourceTree = "<group>";
-		};
-		07BA3DC517D4559D00C562BE /* MainStoryboard_iPhone.storyboard */ = {
-			isa = PBXVariantGroup;
-			children = (
-				07BA3DC617D4559D00C562BE /* en */,
-			);
-			name = MainStoryboard_iPhone.storyboard;
-			sourceTree = "<group>";
-		};
-		07BA3DC817D4559D00C562BE /* MainStoryboard_iPad.storyboard */ = {
-			isa = PBXVariantGroup;
-			children = (
-				07BA3DC917D4559D00C562BE /* en */,
-			);
-			name = MainStoryboard_iPad.storyboard;
 			sourceTree = "<group>";
 		};
 		07BA3DDD17D4559E00C562BE /* InfoPlist.strings */ = {

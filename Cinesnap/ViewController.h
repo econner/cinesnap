@@ -16,16 +16,7 @@
                                               UINavigationControllerDelegate>
 
 @property (strong, nonatomic) AVCamCaptureManager *captureManager;
-@property (strong, nonatomic) IBOutlet UIView *videoPreviewView;
+@property (strong, nonatomic) UIView *videoCaptureView;
 @property (strong, nonatomic) AVCaptureVideoPreviewLayer *captureVideoPreviewLayer;
-@property (strong, nonatomic) IBOutlet UIBarButtonItem *cameraToggleButton;
-@property (strong, nonatomic) IBOutlet UIBarButtonItem *recordButton;
-@property (strong, nonatomic) IBOutlet UIBarButtonItem *stillButton;
-@property (strong, nonatomic) IBOutlet UILabel *focusModeLabel;
-
-#pragma mark Toolbar Actions
-- (IBAction)toggleRecording:(id)sender;
-- (IBAction)captureStillImage:(id)sender;
-- (IBAction)toggleCamera:(id)sender;
 
 @end

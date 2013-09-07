@@ -65,6 +65,7 @@
 -(id)initWithSession:(AVCaptureSession *)session outputFileURL:(NSURL *)outputFileURL;
 -(void)startRecordingWithOrientation:(AVCaptureVideoOrientation)videoOrientation;
 -(void)stopRecording;
++ (AVCaptureConnection *)connectionWithMediaType:(NSString *)mediaType fromConnections:(NSArray *)connections;
 
 @end
 
