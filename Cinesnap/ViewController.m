@@ -6,6 +6,8 @@
 //  Copyright (c) 2013 Eric Conner. All rights reserved.
 //
 
+#import <UIKit/UIKit.h>
+
 #import "ViewController.h"
 #import "AVCamRecorder.h"
 
@@ -16,10 +18,16 @@
 
 - (void)viewDidLoad
 {
+    CGRect viewRect = CGRectMake(0, 40, 320, 320);
+    self.videoCaptureView = [[UIView alloc] initWithFrame:viewRect];
+    self.videoCaptureView.backgroundColor = [UIColor blueColor];
+    
+    [self.view addSubview:self.videoCaptureView];
+    
     UILongPressGestureRecognizer *longPress =
     [[UILongPressGestureRecognizer alloc] initWithTarget:self
                                             action:@selector(holdAction:)];
-    [self.videoPreviewView addGestureRecognizer:longPress];
+    [self.videoCaptureView addGestureRecognizer:longPress];
     
     [super viewDidLoad];
 }
@@ -37,7 +45,7 @@
         if ([[self captureManager] setupSession]) {
             // Create video preview layer and add it to the UI
             AVCaptureVideoPreviewLayer *newCaptureVideoPreviewLayer = [[AVCaptureVideoPreviewLayer alloc] initWithSession:[[self captureManager] session]];
-            UIView *view = [self videoPreviewView];
+            UIView *view = [self videoCaptureView];
             
             CALayer *viewLayer = [view layer];
             [viewLayer setMasksToBounds:YES];
