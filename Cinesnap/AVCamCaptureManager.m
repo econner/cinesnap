@@ -456,6 +456,35 @@ bail:
     return [tempDirectoryPath stringByAppendingPathComponent:@"temp.mov"];
 }
 
+// mostly stolen from http://stackoverflow.com/questions/12136841/avmutablevideocomposition-rotated-video-captured-in-portrait-mode
++(AVMutableVideoCompositionLayerInstruction *)layerInstructionToFixOrientationForAsset:(AVAsset *)inAsset
+                                                                                    forTrack:(AVMutableCompositionTrack *)inTrack
+                                                                                      atTime:(CMTime)inTime {
+    AVMutableVideoCompositionLayerInstruction *videolayerInstruction =
+        [AVMutableVideoCompositionLayerInstruction videoCompositionLayerInstructionWithAssetTrack:inTrack];
+    AVAssetTrack *videoAssetTrack = [[inAsset tracksWithMediaType:AVMediaTypeVideo] objectAtIndex:0];
+    UIImageOrientation videoAssetOrientation_  = UIImageOrientationUp;
+    BOOL  isVideoAssetPortrait_  = NO;
+    CGAffineTransform videoTransform = videoAssetTrack.preferredTransform;
+    
+    if (videoTransform.a == 0 && videoTransform.b == 1.0 && videoTransform.c == -1.0 && videoTransform.d == 0)  {videoAssetOrientation_= UIImageOrientationRight; isVideoAssetPortrait_ = YES;}
+    if (videoTransform.a == 0 && videoTransform.b == -1.0 && videoTransform.c == 1.0 && videoTransform.d == 0)  {videoAssetOrientation_ =  UIImageOrientationLeft; isVideoAssetPortrait_ = YES;}
+    if (videoTransform.a == 1.0 && videoTransform.b == 0 && videoTransform.c == 0 && videoTransform.d == 1.0)   {videoAssetOrientation_ =  UIImageOrientationUp;}
+    if (videoTransform.a == -1.0 && videoTransform.b == 0 && videoTransform.c == 0 && videoTransform.d == -1.0) {videoAssetOrientation_ = UIImageOrientationDown;}
+    
+    CGFloat FirstAssetScaleToFitRatio = 320.0 / videoAssetTrack.naturalSize.width;
+    
+    if (isVideoAssetPortrait_) {
+        FirstAssetScaleToFitRatio = 320.0/videoAssetTrack.naturalSize.height;
+        CGAffineTransform FirstAssetScaleFactor = CGAffineTransformMakeScale(FirstAssetScaleToFitRatio,FirstAssetScaleToFitRatio);
+        [videolayerInstruction setTransform:CGAffineTransformConcat(videoAssetTrack.preferredTransform, FirstAssetScaleFactor) atTime:kCMTimeZero];
+    } else{
+        CGAffineTransform FirstAssetScaleFactor = CGAffineTransformMakeScale(FirstAssetScaleToFitRatio,FirstAssetScaleToFitRatio);
+        [videolayerInstruction setTransform:CGAffineTransformConcat(CGAffineTransformConcat(videoAssetTrack.preferredTransform, FirstAssetScaleFactor),CGAffineTransformMakeTranslation(0, 160)) atTime:kCMTimeZero];
+    }
+    return videolayerInstruction;
+}
+
 -(void)recorder:(AVCamRecorder *)recorder recordingDidFinishToOutputFileURL:(NSURL *)outputFileURL error:(NSError *)error
 {
 	if ([[self recorder] recordsAudio] && ![[self recorder] recordsVideo]) {
@@ -474,6 +503,7 @@ bail:
 	} else {	
 
         AVURLAsset* videoAsset = [[AVURLAsset alloc] initWithURL:outputFileURL options:NULL];
+        CMTime videoDuration = videoAsset.duration;
         
         //create mutable composition
         AVMutableComposition *mixComposition = [AVMutableComposition composition];
@@ -481,7 +511,7 @@ bail:
         AVMutableCompositionTrack *compositionVideoTrack = [mixComposition addMutableTrackWithMediaType:AVMediaTypeVideo
                                                                                        preferredTrackID:kCMPersistentTrackID_Invalid];
         NSError *videoInsertError = nil;
-        BOOL videoInsertResult = [compositionVideoTrack insertTimeRange:CMTimeRangeMake(kCMTimeZero, videoAsset.duration)
+        BOOL videoInsertResult = [compositionVideoTrack insertTimeRange:CMTimeRangeMake(kCMTimeZero, videoDuration)
                                                                 ofTrack:[[videoAsset tracksWithMediaType:AVMediaTypeVideo] objectAtIndex:0]
                                                                  atTime:kCMTimeZero
                                                                   error:&videoInsertError];
@@ -491,21 +521,35 @@ bail:
         }
         
         //slow down whole video by 2.0
-        double videoScaleFactor = 5.0;
-        CMTime videoDuration = videoAsset.duration;
+        double videoScaleFactor = 2.0;
+        CMTime newVideoDuration = CMTimeMake(videoDuration.value*videoScaleFactor, videoDuration.timescale);
         
         [compositionVideoTrack scaleTimeRange:CMTimeRangeMake(kCMTimeZero, videoDuration)
-                                   toDuration:CMTimeMake(videoDuration.value*videoScaleFactor, videoDuration.timescale)];
+                                   toDuration:newVideoDuration];
+        
         
         //export
-        AVAssetExportSession* exportSession = [[AVAssetExportSession alloc] initWithAsset:mixComposition
-                                                                             presetName:AVAssetExportPresetHighestQuality];
+        AVAssetExportSession *exportSession = [[AVAssetExportSession alloc] initWithAsset:mixComposition
+                                                                               presetName:AVAssetExportPresetHighestQuality];
+        
+        // Fix the orientation of the video
+        AVMutableVideoCompositionLayerInstruction *layerInstruction =
+            [AVCamCaptureManager layerInstructionToFixOrientationForAsset:videoAsset
+                                                                       forTrack:compositionVideoTrack
+                                                                         atTime:videoDuration];
 
+        AVMutableVideoComposition *mainComposition = [AVMutableVideoComposition videoComposition];
+        AVMutableVideoCompositionInstruction *mainInstruction = [AVMutableVideoCompositionInstruction videoCompositionInstruction];
+        mainInstruction.layerInstructions = [NSArray arrayWithObject:layerInstruction];
+        mainInstruction.timeRange = CMTimeRangeMake(kCMTimeZero, newVideoDuration);
+        mainComposition.instructions = [NSArray arrayWithObject:mainInstruction];
+        mainComposition.frameDuration = newVideoDuration;
+        mainComposition.renderSize = CGSizeMake(320, 320);
         
         NSURL *exportUrl = [NSURL fileURLWithPath:[AVCamCaptureManager generateTempFilePath]];
-        
         [exportSession setOutputURL:exportUrl];
         [exportSession setOutputFileType:AVFileTypeQuickTimeMovie];
+        exportSession.videoComposition = mainComposition;
         
         ALAssetsLibrary *library = [[ALAssetsLibrary alloc] init];
         
