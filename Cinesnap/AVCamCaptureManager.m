@@ -499,17 +499,15 @@ bail:
         [compositionVideoTrack scaleTimeRange:CMTimeRangeMake(kCMTimeZero, videoDuration)
                                    toDuration:newVideoDuration];
         
-        // Fix the orientation of the video by making the preferred transform and re-scaling
+        // Fix the orientation of the video by making the preferred transform (rotate 90 degrees) and re-scaling
         AVMutableVideoCompositionLayerInstruction *layerInstruction =
             [AVMutableVideoCompositionLayerInstruction videoCompositionLayerInstructionWithAssetTrack:videoAssetTrack];
-        NSLog(@"Natural height is: %f", videoAssetTrack.naturalSize.height);
         CGFloat scaleRatio = 320.0 / videoAssetTrack.naturalSize.height;
         CGAffineTransform scaleTransform = CGAffineTransformMakeScale(scaleRatio, scaleRatio);
         CGAffineTransform prefToScaleTransform = CGAffineTransformConcat(videoAssetTrack.preferredTransform, scaleTransform);
-        // Hack to set proper translation for video frame.  I found 125 by trial and error.
-        // It seems like this should relate mathematically in some way to the preview layer
-        // CGRect location and the scaled size of naturalSize.height, but I'm not sure how.
-        CGAffineTransform translateTransform = CGAffineTransformMakeTranslation(0, -125);
+        // The capture view is 320x320 and crops out the exact middle of the entire capture screen, which captures the main UIScreen.
+        // We need to translate the capture view upwards to align with the window, which starts at the top of the main screen.
+        CGAffineTransform translateTransform = CGAffineTransformMakeTranslation(0, -([[UIScreen mainScreen] bounds].size.height - 320) / 2.0);
         CGAffineTransform scaleAndTransTransform = CGAffineTransformConcat(prefToScaleTransform, translateTransform);
         [layerInstruction setTransform:scaleAndTransTransform atTime:kCMTimeZero];
 
