@@ -502,9 +502,16 @@ bail:
         // Fix the orientation of the video by making the preferred transform and re-scaling
         AVMutableVideoCompositionLayerInstruction *layerInstruction =
             [AVMutableVideoCompositionLayerInstruction videoCompositionLayerInstructionWithAssetTrack:videoAssetTrack];
+        NSLog(@"Natural height is: %f", videoAssetTrack.naturalSize.height);
         CGFloat scaleRatio = 320.0 / videoAssetTrack.naturalSize.height;
         CGAffineTransform scaleTransform = CGAffineTransformMakeScale(scaleRatio, scaleRatio);
-        [layerInstruction setTransform:CGAffineTransformConcat(videoAssetTrack.preferredTransform, scaleTransform) atTime:kCMTimeZero];
+        CGAffineTransform prefToScaleTransform = CGAffineTransformConcat(videoAssetTrack.preferredTransform, scaleTransform);
+        // Hack to set proper translation for video frame.  I found 125 by trial and error.
+        // It seems like this should relate mathematically in some way to the preview layer
+        // CGRect location and the scaled size of naturalSize.height, but I'm not sure how.
+        CGAffineTransform translateTransform = CGAffineTransformMakeTranslation(0, -125);
+        CGAffineTransform scaleAndTransTransform = CGAffineTransformConcat(prefToScaleTransform, translateTransform);
+        [layerInstruction setTransform:scaleAndTransTransform atTime:kCMTimeZero];
 
         // Set up the main video composition, which includes the layer instruction for fixing the orientation
         AVMutableVideoComposition *mainComposition = [AVMutableVideoComposition videoComposition];
