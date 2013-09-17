@@ -26,6 +26,8 @@
     mExtAFSampleRate = 44100.;
     mExtAFNumChannels = 1;
     
+    mReadFromAsset = YES;
+    
     NSDictionary *outputSettings = [NSDictionary dictionaryWithObjectsAndKeys:
                                     [NSNumber numberWithInt:kAudioFormatLinearPCM], AVFormatIDKey,
                                     [NSNumber numberWithFloat:mPlaybackSampleRate], AVSampleRateKey,
@@ -38,11 +40,9 @@
     
     mAssetReaderOutput = [[AVAssetReaderTrackOutput alloc] initWithTrack:audioAssetTrack
                                                           outputSettings:outputSettings];
-    AVAssetReader *assetReader = [AVAssetReader assetReaderWithAsset:[audioAssetTrack asset] error:nil];
-    [assetReader addOutput:mAssetReaderOutput];
-    [assetReader startReading];
-    
-    
+    mAssetReader = [AVAssetReader assetReaderWithAsset:[audioAssetTrack asset] error:nil];
+    [mAssetReader addOutput:mAssetReaderOutput];
+    [mAssetReader startReading];
 }
 
 
@@ -177,6 +177,11 @@ error:
 
 -(long) pullNewSamplesFromAsset:(AVAssetReaderOutput *)assetOutput
 {
+    if ([mAssetReader status] != AVAssetReaderStatusReading) {
+        mAssetNumSamplesInBuffer = mAssetNumSamplesRead = 0;
+		return 0;	// EOF
+    }
+
     NSLog(@"Got here..pulling in new sample.");
 	// protect our asset reader from a seek operation that might be carried our in parallel
     @synchronized(assetOutput) {
@@ -231,7 +236,7 @@ error:
 		if (buffer) {
 			// we want numSamplesToRead samples from our asset in this call
 			for (long v = 0; v < numSamplesToRead; v++) {
-                NSLog(@"Going to read some samples.");
+//                NSLog(@"Going to read some samples.");
 				// if we have exceeded the amount of samples that are still in the buffer get new ones
 				if (mAssetNumSamplesRead++ >= mAssetNumSamplesInBuffer-1) {
 					// this reads a chunk of data from the asset. We cannot set the size of the chunk that is actually read, so we store the data

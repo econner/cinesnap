@@ -472,7 +472,7 @@ long myReadData(float **chdata, long numFrames, void *userData)
 	if (!chdata)
         return 0;
     
-    NSLog(@"GOT HERE");
+//    NSLog(@"GOT HERE");
 	
     // The userData parameter can be used to pass information about the caller (for example, "self") to
 	// the callback so it can manage its audio streams.
@@ -484,12 +484,12 @@ long myReadData(float **chdata, long numFrames, void *userData)
     
     for (long v = 0; v < 1; v++) {
 		for(long f = 0; f < numFrames; f++) {
-            printf("%f", chdata[v][f]);
+//            printf("%f", chdata[v][f]);
         }
 	}
 
 	
-    return 0;
+    return err;
 }
 
 void DeallocateAudioBuffer(float **audio, int numChannels)
@@ -565,25 +565,25 @@ float **AllocateAudioBuffer(int numChannels, int numFrames)
 	long numFrames = 8192;
     
     // Allocate buffer for output
-	float **audio = AllocateAudioBuffer(numChannels, numFrames);
+    float **audio = AllocateAudioBuffer(numChannels, numFrames);
     
     // MAIN PROCESSING LOOP STARTS HERE
-	for(;;) {
+	for (int i = 0;;i++) {
 		// Call the DIRAC process function with current time and pitch settings
 		// Returns: the number of frames in audio
 		long ret = DiracProcess(audio, numFrames, dirac);
-        
-		// Write the data to the output file
-		[writer writeFloats:numFrames fromArray:audio];
 		
-		// As soon as we've written enough frames we exit the main loop
-		if (ret <= 0)
-            break;
+        // Write the data to the output file
+        if (i < 5)
+            OSStatus err = [writer writeFloats:numFrames fromArray:audio];
 
+        // As soon as we've written enough frames we exit the main loop
+		if (ret <= 0) {
+            break;
+        }
     }
-    
     // Free buffer for output.
-	DeallocateAudioBuffer(audio, numChannels);
+    DeallocateAudioBuffer(audio, numChannels);
 	
 	// Destroy DIRAC instance.
 	DiracDestroy( dirac );
