@@ -540,7 +540,7 @@ float **AllocateAudioBuffer(int numChannels, int numFrames)
     
 	// DIRAC parameters
 	// Here we set our time an pitch manipulation values
-	float time      = 2.00;                 // 115% length
+	float time      = 0.5;                 // 115% length
 	float pitch     = pow(2., 0./12.);     // pitch shift (0 semitones)
 	float formant   = pow(2., 0./12.);    // formant shift (0 semitones). Note formants are reciprocal to pitch in natural transposing
     
@@ -563,6 +563,8 @@ float **AllocateAudioBuffer(int numChannels, int numFrames)
         
     // This is an arbitrary number of frames per call. Change as you see fit
 	long numFrames = 8192;
+    float totalNumFrames = time * CMTimeGetSeconds([audioAssetTrack asset].duration) * sampleRate;
+    float remainingFramesToWrite = totalNumFrames;
     
     // Allocate buffer for output
     float **audio = AllocateAudioBuffer(numChannels, numFrames);
@@ -574,12 +576,18 @@ float **AllocateAudioBuffer(int numChannels, int numFrames)
 		long ret = DiracProcess(audio, numFrames, dirac);
 		
         // Write the data to the output file
-        if (i < 5)
-            OSStatus err = [writer writeFloats:numFrames fromArray:audio];
-
+        float framesToWrite = numFrames;
+        if(remainingFramesToWrite <= numFrames) {
+            framesToWrite = remainingFramesToWrite;
+        }
+        
+        OSStatus err = [writer writeFloats:framesToWrite fromArray:audio];
+        
+        remainingFramesToWrite -= framesToWrite;
+        
         // As soon as we've written enough frames we exit the main loop
 		if (ret <= 0) {
-            break;
+            break; 
         }
     }
     // Free buffer for output.
@@ -640,29 +648,33 @@ float **AllocateAudioBuffer(int numChannels, int numFrames)
         AVMutableCompositionTrack *compositionAudioTrack = [mixComposition addMutableTrackWithMediaType:AVMediaTypeAudio
                                                                                        preferredTrackID:kCMPersistentTrackID_Invalid];
         
+        //slow down whole video by 2.0
+        double videoScaleFactor = 0.5;
+        CMTime newVideoDuration = CMTimeMake(videoDuration.value * videoScaleFactor, videoDuration.timescale);
+        
         NSError *videoInsertError = nil;
         BOOL videoInsertResult = [compositionVideoTrack insertTimeRange:CMTimeRangeMake(kCMTimeZero, videoDuration)
                                                                 ofTrack:videoAssetTrack
                                                                  atTime:kCMTimeZero
                                                                   error:&videoInsertError];
-        
-        NSError *audioInsertError = nil;
-        BOOL audioInsertResult = [compositionAudioTrack insertTimeRange:CMTimeRangeMake(kCMTimeZero, audioDuration)
-                                                                ofTrack:transformedAudioAssetTrack
-                                                                 atTime:kCMTimeZero
-                                                                  error:&audioInsertError];
 
         if (!videoInsertResult || nil != videoInsertError) {
             //handle error
             return;
         }
         
-        //slow down whole video by 2.0
-        double videoScaleFactor = 2.0;
-        CMTime newVideoDuration = CMTimeMake(videoDuration.value * videoScaleFactor, videoDuration.timescale);
-        
         [compositionVideoTrack scaleTimeRange:CMTimeRangeMake(kCMTimeZero, videoDuration)
                                    toDuration:newVideoDuration];
+        
+        CMTime newAudioDuration = [compositionVideoTrack.asset duration];
+        NSLog(@"Audio duration val to write: %lld at timescale %d", newAudioDuration.value, newAudioDuration.timescale);
+        NSLog(@"Audio duration val: %lld at timescale %d", audioDuration.value, audioDuration.timescale);
+        
+        NSError *audioInsertError = nil;
+        BOOL audioInsertResult = [compositionAudioTrack insertTimeRange:CMTimeRangeMake(kCMTimeZero, newAudioDuration)
+                                                                ofTrack:transformedAudioAssetTrack
+                                                                 atTime:kCMTimeZero
+                                                                  error:&audioInsertError];
         
         // Fix the orientation of the video by making the preferred transform (rotate 90 degrees) and re-scaling
         AVMutableVideoCompositionLayerInstruction *layerInstruction =
