@@ -47,6 +47,7 @@
 
 #import <Foundation/Foundation.h>
 #import <AVFoundation/AVFoundation.h>
+#import "EAFRead.h"
 
 @class AVCamRecorder;
 @protocol AVCamCaptureManagerDelegate;
@@ -63,6 +64,7 @@
 @property (nonatomic,assign) id deviceDisconnectedObserver;
 @property (nonatomic,assign) UIBackgroundTaskIdentifier backgroundRecordingID;
 @property (nonatomic,assign) id <AVCamCaptureManagerDelegate> delegate;
+@property (strong, nonatomic) EAFRead *reader;
 
 - (BOOL) setupSession;
 - (void) startRecording;
