@@ -7,10 +7,15 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		0770FB5317D4E8890033B980 /* AVCamCaptureManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 0770FB5217D4E8890033B980 /* AVCamCaptureManager.m */; };
-		0770FB5417D4E8890033B980 /* AVCamCaptureManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 0770FB5217D4E8890033B980 /* AVCamCaptureManager.m */; };
+		070B452417E6B05100ED7D73 /* EAFWrite.mm in Sources */ = {isa = PBXBuildFile; fileRef = 070B452317E6B05100ED7D73 /* EAFWrite.mm */; };
+		070B452717E6BC2D00ED7D73 /* EAFRead.mm in Sources */ = {isa = PBXBuildFile; fileRef = 070B452617E6BC2D00ED7D73 /* EAFRead.mm */; };
+		0770FB5317D4E8890033B980 /* AVCamCaptureManager.mm in Sources */ = {isa = PBXBuildFile; fileRef = 0770FB5217D4E8890033B980 /* AVCamCaptureManager.mm */; };
+		0770FB5417D4E8890033B980 /* AVCamCaptureManager.mm in Sources */ = {isa = PBXBuildFile; fileRef = 0770FB5217D4E8890033B980 /* AVCamCaptureManager.mm */; };
 		0770FB5917D4ED500033B980 /* AVCamRecorder.m in Sources */ = {isa = PBXBuildFile; fileRef = 0770FB5617D4ED500033B980 /* AVCamRecorder.m */; };
 		0770FB5A17D4ED500033B980 /* AVCamRecorder.m in Sources */ = {isa = PBXBuildFile; fileRef = 0770FB5617D4ED500033B980 /* AVCamRecorder.m */; };
+		07A5963917E66DF400B5BA74 /* libDIRAC_iOS-fat.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 07A5963717E66DF400B5BA74 /* libDIRAC_iOS-fat.a */; };
+		07A5963C17E6750000B5BA74 /* Accelerate.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 07A5963B17E6750000B5BA74 /* Accelerate.framework */; };
+		07A5963E17E6774000B5BA74 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 07A5963D17E6774000B5BA74 /* AudioToolbox.framework */; };
 		07BA3DAE17D4559D00C562BE /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 07BA3DAD17D4559D00C562BE /* UIKit.framework */; };
 		07BA3DB017D4559D00C562BE /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 07BA3DAF17D4559D00C562BE /* Foundation.framework */; };
 		07BA3DB217D4559D00C562BE /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 07BA3DB117D4559D00C562BE /* CoreGraphics.framework */; };
@@ -45,10 +50,19 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		070B452217E6B05100ED7D73 /* EAFWrite.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EAFWrite.h; sourceTree = "<group>"; };
+		070B452317E6B05100ED7D73 /* EAFWrite.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = EAFWrite.mm; sourceTree = "<group>"; };
+		070B452517E6BC2C00ED7D73 /* EAFRead.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EAFRead.h; sourceTree = "<group>"; };
+		070B452617E6BC2D00ED7D73 /* EAFRead.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = EAFRead.mm; sourceTree = "<group>"; };
 		0770FB5117D4E8890033B980 /* AVCamCaptureManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AVCamCaptureManager.h; sourceTree = "<group>"; };
-		0770FB5217D4E8890033B980 /* AVCamCaptureManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AVCamCaptureManager.m; sourceTree = "<group>"; };
+		0770FB5217D4E8890033B980 /* AVCamCaptureManager.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = AVCamCaptureManager.mm; sourceTree = "<group>"; };
 		0770FB5517D4ED500033B980 /* AVCamRecorder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AVCamRecorder.h; sourceTree = "<group>"; };
 		0770FB5617D4ED500033B980 /* AVCamRecorder.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AVCamRecorder.m; sourceTree = "<group>"; };
+		07A5963617E66DF400B5BA74 /* Dirac.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Dirac.h; sourceTree = "<group>"; };
+		07A5963717E66DF400B5BA74 /* libDIRAC_iOS-fat.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = "libDIRAC_iOS-fat.a"; sourceTree = "<group>"; };
+		07A5963817E66DF400B5BA74 /* libDIRAC_iOS4-fat.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = "libDIRAC_iOS4-fat.a"; sourceTree = "<group>"; };
+		07A5963B17E6750000B5BA74 /* Accelerate.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Accelerate.framework; path = System/Library/Frameworks/Accelerate.framework; sourceTree = SDKROOT; };
+		07A5963D17E6774000B5BA74 /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = System/Library/Frameworks/AudioToolbox.framework; sourceTree = SDKROOT; };
 		07BA3DAA17D4559D00C562BE /* Cinesnap.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Cinesnap.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		07BA3DAD17D4559D00C562BE /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		07BA3DAF17D4559D00C562BE /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -83,6 +97,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				07A5963E17E6774000B5BA74 /* AudioToolbox.framework in Frameworks */,
+				07A5963C17E6750000B5BA74 /* Accelerate.framework in Frameworks */,
 				07BA3DF617D455F700C562BE /* QuartzCore.framework in Frameworks */,
 				07BA3DF417D455EC00C562BE /* MobileCoreServices.framework in Frameworks */,
 				07BA3DF217D455E400C562BE /* MediaPlayer.framework in Frameworks */,
@@ -92,6 +108,7 @@
 				07BA3DAE17D4559D00C562BE /* UIKit.framework in Frameworks */,
 				07BA3DB017D4559D00C562BE /* Foundation.framework in Frameworks */,
 				07BA3DB217D4559D00C562BE /* CoreGraphics.framework in Frameworks */,
+				07A5963917E66DF400B5BA74 /* libDIRAC_iOS-fat.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -111,6 +128,8 @@
 		07BA3DA117D4559D00C562BE = {
 			isa = PBXGroup;
 			children = (
+				07A5963D17E6774000B5BA74 /* AudioToolbox.framework */,
+				07A5963B17E6750000B5BA74 /* Accelerate.framework */,
 				07BA3DF517D455F700C562BE /* QuartzCore.framework */,
 				07BA3DF317D455EC00C562BE /* MobileCoreServices.framework */,
 				07BA3DF117D455E400C562BE /* MediaPlayer.framework */,
@@ -150,7 +169,11 @@
 				0770FB5517D4ED500033B980 /* AVCamRecorder.h */,
 				0770FB5617D4ED500033B980 /* AVCamRecorder.m */,
 				0770FB5117D4E8890033B980 /* AVCamCaptureManager.h */,
-				0770FB5217D4E8890033B980 /* AVCamCaptureManager.m */,
+				0770FB5217D4E8890033B980 /* AVCamCaptureManager.mm */,
+				070B452517E6BC2C00ED7D73 /* EAFRead.h */,
+				070B452617E6BC2D00ED7D73 /* EAFRead.mm */,
+				070B452217E6B05100ED7D73 /* EAFWrite.h */,
+				070B452317E6B05100ED7D73 /* EAFWrite.mm */,
 				07BA3DBC17D4559D00C562BE /* AppDelegate.h */,
 				07BA3DBD17D4559D00C562BE /* AppDelegate.m */,
 				07BA3DCB17D4559E00C562BE /* ViewController.h */,
@@ -163,6 +186,9 @@
 		07BA3DB417D4559D00C562BE /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
+				07A5963617E66DF400B5BA74 /* Dirac.h */,
+				07A5963717E66DF400B5BA74 /* libDIRAC_iOS-fat.a */,
+				07A5963817E66DF400B5BA74 /* libDIRAC_iOS4-fat.a */,
 				07BA3DB517D4559D00C562BE /* Cinesnap-Info.plist */,
 				07BA3DB617D4559D00C562BE /* InfoPlist.strings */,
 				07BA3DB917D4559D00C562BE /* main.m */,
@@ -305,8 +331,10 @@
 				07BA3DBA17D4559D00C562BE /* main.m in Sources */,
 				07BA3DBE17D4559D00C562BE /* AppDelegate.m in Sources */,
 				07BA3DCD17D4559E00C562BE /* ViewController.m in Sources */,
-				0770FB5317D4E8890033B980 /* AVCamCaptureManager.m in Sources */,
+				0770FB5317D4E8890033B980 /* AVCamCaptureManager.mm in Sources */,
 				0770FB5917D4ED500033B980 /* AVCamRecorder.m in Sources */,
+				070B452417E6B05100ED7D73 /* EAFWrite.mm in Sources */,
+				070B452717E6BC2D00ED7D73 /* EAFRead.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -315,7 +343,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				07BA3DE217D4559E00C562BE /* CinesnapTests.m in Sources */,
-				0770FB5417D4E8890033B980 /* AVCamCaptureManager.m in Sources */,
+				0770FB5417D4E8890033B980 /* AVCamCaptureManager.mm in Sources */,
 				0770FB5A17D4ED500033B980 /* AVCamRecorder.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -415,6 +443,10 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "Cinesnap/Cinesnap-Prefix.pch";
 				INFOPLIST_FILE = "Cinesnap/Cinesnap-Info.plist";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/Cinesnap\"",
+				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
 				WRAPPER_EXTENSION = app;
@@ -428,6 +460,10 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "Cinesnap/Cinesnap-Prefix.pch";
 				INFOPLIST_FILE = "Cinesnap/Cinesnap-Info.plist";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/Cinesnap\"",
+				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
 				WRAPPER_EXTENSION = app;

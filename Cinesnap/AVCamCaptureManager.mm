@@ -50,6 +50,10 @@
 #import <MobileCoreServices/UTCoreTypes.h>
 #import <AssetsLibrary/AssetsLibrary.h>
 #import <ImageIO/CGImageProperties.h>
+#import "Dirac.h"
+#import <AudioToolbox/AudioToolbox.h>
+#import "EAFWrite.h"
+
 
 @interface AVCamCaptureManager (RecorderDelegate) <AVCamRecorderDelegate>
 @end
@@ -436,7 +440,7 @@ bail:
     }
 }
 
-+(NSString *)generateTempFilePath
++(NSString *)generateTempFilePath:(NSString *)extension
 {
     NSString *tempDirectoryTemplate = [NSTemporaryDirectory() stringByAppendingPathComponent:@"tempdir.XXXXXX"];
     const char *tempDirectoryTemplateCString = [tempDirectoryTemplate fileSystemRepresentation];
@@ -453,8 +457,154 @@ bail:
                                                                                               length:strlen(result)];
     free(tempDirectoryNameCString);
     
-    return [tempDirectoryPath stringByAppendingPathComponent:@"temp.mov"];
+    NSString *filename = [@"temp" stringByAppendingString:extension];
+    return [tempDirectoryPath stringByAppendingPathComponent:filename];
 }
+
+/*
+ This is the callback function that supplies data from the input stream/file whenever needed.
+ It should be implemented in your software by a routine that gets data from the input/buffers.
+ The read requests are *always* consecutive, ie. the routine will never have to supply data out
+ of order.
+ */
+long myReadData(float **chdata, long numFrames, void *userData)
+{
+	if (!chdata)
+        return 0;
+    
+//    NSLog(@"GOT HERE");
+	
+    // The userData parameter can be used to pass information about the caller (for example, "self") to
+	// the callback so it can manage its audio streams.
+	AVCamCaptureManager *Self = (__bridge AVCamCaptureManager*)userData;
+	if (!Self)
+        return 0;
+        
+    OSStatus err = [Self.reader readFloatsConsecutive:numFrames intoArray:chdata];
+    
+    for (long v = 0; v < 1; v++) {
+		for(long f = 0; f < numFrames; f++) {
+//            printf("%f", chdata[v][f]);
+        }
+	}
+
+	
+    return err;
+}
+
+void DeallocateAudioBuffer(float **audio, int numChannels)
+{
+	if (!audio) return;
+	for (long v = 0; v < numChannels; v++) {
+		if (audio[v]) {
+			free(audio[v]);
+			audio[v] = NULL;
+		}
+	}
+	free(audio);
+	audio = NULL;
+}
+// ---------------------------------------------------------------------------------------------------------------------------
+
+float **AllocateAudioBuffer(int numChannels, int numFrames)
+{
+	// Allocate buffer for output
+	float **audio = (float**)malloc(numChannels*sizeof(float*));
+	if (!audio) return NULL;
+	memset(audio, 0, numChannels*sizeof(float*));
+	for (long v = 0; v < numChannels; v++) {
+		audio[v] = (float*)malloc(numFrames*sizeof(float));
+		if (!audio[v]) {
+			DeallocateAudioBuffer(audio, numChannels);
+			return NULL;
+		}
+		else memset(audio[v], 0, numFrames*sizeof(float));
+	}
+	return audio;
+}
+
+-(NSURL *)transformAudioTrack:(AVAssetTrack *)audioAssetTrack
+{    
+    long numChannels = 1;		// DIRAC LE allows mono only
+	float sampleRate = 44100.;
+
+    // Create output file (overwrite if exists)
+    EAFWrite *writer = [[EAFWrite alloc] init];
+    NSURL *outputUrl = [NSURL fileURLWithPath:[AVCamCaptureManager generateTempFilePath:@".aif"]];
+	[writer openFileForWrite:outputUrl sr:sampleRate channels:numChannels wordLength:16 type:kAudioFileAIFFType];
+    
+    
+    // Open up audio file.
+    self.reader = [[EAFRead alloc] init];
+    [self.reader fromAudioAssetTrack:audioAssetTrack];
+    
+	// DIRAC parameters
+	// Here we set our time an pitch manipulation values
+	float time      = 0.5;                 // 115% length
+	float pitch     = pow(2., 0./12.);     // pitch shift (0 semitones)
+	float formant   = pow(2., 0./12.);    // formant shift (0 semitones). Note formants are reciprocal to pitch in natural transposing
+    
+    // First we set up DIRAC to process numChannels of audio at 44.1kHz
+	// N.b.: The fastest option is kDiracLambdaPreview / kDiracQualityPreview, best is kDiracLambda3, kDiracQualityBest
+	// The probably best *default* option for general purpose signals is kDiracLambda3 / kDiracQualityGood
+	void *dirac = DiracCreate(kDiracLambdaPreview, kDiracQualityPreview, numChannels, sampleRate, &myReadData, (__bridge void*)self);
+    
+    // Pass the values to our DIRAC instance
+	DiracSetProperty(kDiracPropertyTimeFactor, time, dirac);
+	DiracSetProperty(kDiracPropertyPitchFactor, pitch, dirac);
+	DiracSetProperty(kDiracPropertyFormantFactor, formant, dirac);
+	
+	// upshifting pitch will be slower, so in this case we'll enable constant CPU pitch shifting
+	if (pitch > 1.0)
+		DiracSetProperty(kDiracPropertyUseConstantCpuPitchShift, 1, dirac);
+    
+	// Print our settings to the console
+	DiracPrintSettings(dirac);
+        
+    // This is an arbitrary number of frames per call. Change as you see fit
+	long numFrames = 8192;
+    float totalNumFrames = time * CMTimeGetSeconds([audioAssetTrack asset].duration) * sampleRate;
+    float remainingFramesToWrite = totalNumFrames;
+    
+    // Allocate buffer for output
+    float **audio = AllocateAudioBuffer(numChannels, numFrames);
+    
+    // MAIN PROCESSING LOOP STARTS HERE
+	for (int i = 0;;i++) {
+		// Call the DIRAC process function with current time and pitch settings
+		// Returns: the number of frames in audio
+		long ret = DiracProcess(audio, numFrames, dirac);
+		
+        // Write the data to the output file
+        float framesToWrite = numFrames;
+        if(remainingFramesToWrite <= numFrames) {
+            framesToWrite = remainingFramesToWrite;
+        }
+        
+        OSStatus err = [writer writeFloats:framesToWrite fromArray:audio];
+        
+        remainingFramesToWrite -= framesToWrite;
+        
+        // As soon as we've written enough frames we exit the main loop
+		if (ret <= 0) {
+            break; 
+        }
+    }
+    // Free buffer for output.
+    DeallocateAudioBuffer(audio, numChannels);
+	
+	// Destroy DIRAC instance.
+	DiracDestroy( dirac );
+	
+	// Done!
+	NSLog(@"\nDone!");
+    
+    [self.reader closeFile];
+	[writer closeFile]; // important - flushes data to file
+    
+    return outputUrl;
+}
+
 
 -(void)recorder:(AVCamRecorder *)recorder recordingDidFinishToOutputFileURL:(NSURL *)outputFileURL error:(NSError *)error
 {
@@ -474,30 +624,57 @@ bail:
 	} else {	
 
         AVURLAsset* videoAsset = [[AVURLAsset alloc] initWithURL:outputFileURL options:NULL];
+        
         AVAssetTrack *videoAssetTrack = [[videoAsset tracksWithMediaType:AVMediaTypeVideo] objectAtIndex:0];
+        
+        // Scale the audio track by the appropriate factor.
+        AVAssetTrack *audioAssetTrack = [[videoAsset tracksWithMediaType:AVMediaTypeAudio] objectAtIndex:0];
+        
+        NSURL* transformedAudioUrl = [self transformAudioTrack:audioAssetTrack];
+        NSLog(@"Returned URL: %@", transformedAudioUrl);
+        AVURLAsset* transformedAudioAsset = [[AVURLAsset alloc] initWithURL:transformedAudioUrl options:NULL];
+        AVAssetTrack *transformedAudioAssetTrack = [[transformedAudioAsset tracksWithMediaType:AVMediaTypeAudio] objectAtIndex:0];
+        CMTime audioDuration = transformedAudioAsset.duration;
+        
+        CMTimeShow(audioDuration);
+        
         CMTime videoDuration = videoAsset.duration;
         
-        //create mutable composition
+        // Create mutable composition
         AVMutableComposition *mixComposition = [AVMutableComposition composition];
         
         AVMutableCompositionTrack *compositionVideoTrack = [mixComposition addMutableTrackWithMediaType:AVMediaTypeVideo
                                                                                        preferredTrackID:kCMPersistentTrackID_Invalid];
+        AVMutableCompositionTrack *compositionAudioTrack = [mixComposition addMutableTrackWithMediaType:AVMediaTypeAudio
+                                                                                       preferredTrackID:kCMPersistentTrackID_Invalid];
+        
+        //slow down whole video by 2.0
+        double videoScaleFactor = 0.5;
+        CMTime newVideoDuration = CMTimeMake(videoDuration.value * videoScaleFactor, videoDuration.timescale);
+        
         NSError *videoInsertError = nil;
         BOOL videoInsertResult = [compositionVideoTrack insertTimeRange:CMTimeRangeMake(kCMTimeZero, videoDuration)
                                                                 ofTrack:videoAssetTrack
                                                                  atTime:kCMTimeZero
                                                                   error:&videoInsertError];
+
         if (!videoInsertResult || nil != videoInsertError) {
             //handle error
             return;
         }
         
-        //slow down whole video by 2.0
-        double videoScaleFactor = 2.0;
-        CMTime newVideoDuration = CMTimeMake(videoDuration.value*videoScaleFactor, videoDuration.timescale);
-        
         [compositionVideoTrack scaleTimeRange:CMTimeRangeMake(kCMTimeZero, videoDuration)
                                    toDuration:newVideoDuration];
+        
+        CMTime newAudioDuration = [compositionVideoTrack.asset duration];
+        NSLog(@"Audio duration val to write: %lld at timescale %d", newAudioDuration.value, newAudioDuration.timescale);
+        NSLog(@"Audio duration val: %lld at timescale %d", audioDuration.value, audioDuration.timescale);
+        
+        NSError *audioInsertError = nil;
+        BOOL audioInsertResult = [compositionAudioTrack insertTimeRange:CMTimeRangeMake(kCMTimeZero, newAudioDuration)
+                                                                ofTrack:transformedAudioAssetTrack
+                                                                 atTime:kCMTimeZero
+                                                                  error:&audioInsertError];
         
         // Fix the orientation of the video by making the preferred transform (rotate 90 degrees) and re-scaling
         AVMutableVideoCompositionLayerInstruction *layerInstruction =
@@ -523,7 +700,7 @@ bail:
         // Export to a temporary path
         AVAssetExportSession *exportSession = [[AVAssetExportSession alloc] initWithAsset:mixComposition
                                                                                presetName:AVAssetExportPresetHighestQuality];
-        NSURL *exportUrl = [NSURL fileURLWithPath:[AVCamCaptureManager generateTempFilePath]];
+        NSURL *exportUrl = [NSURL fileURLWithPath:[AVCamCaptureManager generateTempFilePath:@".mov"]];
         [exportSession setOutputURL:exportUrl];
         [exportSession setOutputFileType:AVFileTypeQuickTimeMovie];
         exportSession.videoComposition = mainComposition;
