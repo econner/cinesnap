@@ -13,6 +13,7 @@
 		0770FB5417D4E8890033B980 /* AVCamCaptureManager.mm in Sources */ = {isa = PBXBuildFile; fileRef = 0770FB5217D4E8890033B980 /* AVCamCaptureManager.mm */; };
 		0770FB5917D4ED500033B980 /* AVCamRecorder.m in Sources */ = {isa = PBXBuildFile; fileRef = 0770FB5617D4ED500033B980 /* AVCamRecorder.m */; };
 		0770FB5A17D4ED500033B980 /* AVCamRecorder.m in Sources */ = {isa = PBXBuildFile; fileRef = 0770FB5617D4ED500033B980 /* AVCamRecorder.m */; };
+		07A2CD8B17EFAB18001C9458 /* AudioSpeedManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 07A2CD8A17EFAB18001C9458 /* AudioSpeedManager.m */; };
 		07A5963917E66DF400B5BA74 /* libDIRAC_iOS-fat.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 07A5963717E66DF400B5BA74 /* libDIRAC_iOS-fat.a */; };
 		07A5963C17E6750000B5BA74 /* Accelerate.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 07A5963B17E6750000B5BA74 /* Accelerate.framework */; };
 		07A5963E17E6774000B5BA74 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 07A5963D17E6774000B5BA74 /* AudioToolbox.framework */; };
@@ -58,6 +59,8 @@
 		0770FB5217D4E8890033B980 /* AVCamCaptureManager.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = AVCamCaptureManager.mm; sourceTree = "<group>"; };
 		0770FB5517D4ED500033B980 /* AVCamRecorder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AVCamRecorder.h; sourceTree = "<group>"; };
 		0770FB5617D4ED500033B980 /* AVCamRecorder.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AVCamRecorder.m; sourceTree = "<group>"; };
+		07A2CD8917EFAB18001C9458 /* AudioSpeedManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AudioSpeedManager.h; sourceTree = "<group>"; };
+		07A2CD8A17EFAB18001C9458 /* AudioSpeedManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AudioSpeedManager.m; sourceTree = "<group>"; };
 		07A5963617E66DF400B5BA74 /* Dirac.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Dirac.h; sourceTree = "<group>"; };
 		07A5963717E66DF400B5BA74 /* libDIRAC_iOS-fat.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = "libDIRAC_iOS-fat.a"; sourceTree = "<group>"; };
 		07A5963817E66DF400B5BA74 /* libDIRAC_iOS4-fat.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = "libDIRAC_iOS4-fat.a"; sourceTree = "<group>"; };
@@ -170,6 +173,8 @@
 				0770FB5617D4ED500033B980 /* AVCamRecorder.m */,
 				0770FB5117D4E8890033B980 /* AVCamCaptureManager.h */,
 				0770FB5217D4E8890033B980 /* AVCamCaptureManager.mm */,
+				07A2CD8917EFAB18001C9458 /* AudioSpeedManager.h */,
+				07A2CD8A17EFAB18001C9458 /* AudioSpeedManager.m */,
 				070B452517E6BC2C00ED7D73 /* EAFRead.h */,
 				070B452617E6BC2D00ED7D73 /* EAFRead.mm */,
 				070B452217E6B05100ED7D73 /* EAFWrite.h */,
@@ -335,6 +340,7 @@
 				0770FB5917D4ED500033B980 /* AVCamRecorder.m in Sources */,
 				070B452417E6B05100ED7D73 /* EAFWrite.mm in Sources */,
 				070B452717E6BC2D00ED7D73 /* EAFRead.mm in Sources */,
+				07A2CD8B17EFAB18001C9458 /* AudioSpeedManager.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
