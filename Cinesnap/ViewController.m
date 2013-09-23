@@ -10,6 +10,7 @@
 
 #import "ViewController.h"
 #import "AVCamRecorder.h"
+#import "VideoPreviewViewController.h"
 
 @interface ViewController (AVCamCaptureManagerDelegate) <AVCamCaptureManagerDelegate>
 @end
@@ -100,6 +101,17 @@
                                                   cancelButtonTitle:NSLocalizedString(@"OK", @"OK button title")
                                                   otherButtonTitles:nil];
         [alertView show];
+    });
+}
+
+- (void) captureManagerRecordingFinished:(AVCamCaptureManager *)captureManager toUrl:(NSURL *)url
+{
+    CFRunLoopPerformBlock(CFRunLoopGetMain(), kCFRunLoopCommonModes, ^(void) {
+        NSLog(@"GOT HERE, RECORDING FINISHED");
+        VideoPreviewViewController *previewController = [[VideoPreviewViewController alloc] initWithVideoURL:url];
+        
+        NSLog(@"NAVIGATION VIEW CONTROLLER IS: %@", self.navigationController);
+        [self.navigationController pushViewController:previewController animated:YES];
     });
 }
 

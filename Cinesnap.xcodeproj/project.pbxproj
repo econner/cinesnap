@@ -14,6 +14,7 @@
 		0770FB5917D4ED500033B980 /* AVCamRecorder.m in Sources */ = {isa = PBXBuildFile; fileRef = 0770FB5617D4ED500033B980 /* AVCamRecorder.m */; };
 		0770FB5A17D4ED500033B980 /* AVCamRecorder.m in Sources */ = {isa = PBXBuildFile; fileRef = 0770FB5617D4ED500033B980 /* AVCamRecorder.m */; };
 		07A2CD8B17EFAB18001C9458 /* AudioSpeedManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 07A2CD8A17EFAB18001C9458 /* AudioSpeedManager.m */; };
+		07A2CD8E17EFB1B9001C9458 /* VideoPreviewViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 07A2CD8D17EFB1B9001C9458 /* VideoPreviewViewController.m */; };
 		07A5963917E66DF400B5BA74 /* libDIRAC_iOS-fat.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 07A5963717E66DF400B5BA74 /* libDIRAC_iOS-fat.a */; };
 		07A5963C17E6750000B5BA74 /* Accelerate.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 07A5963B17E6750000B5BA74 /* Accelerate.framework */; };
 		07A5963E17E6774000B5BA74 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 07A5963D17E6774000B5BA74 /* AudioToolbox.framework */; };
@@ -61,6 +62,8 @@
 		0770FB5617D4ED500033B980 /* AVCamRecorder.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AVCamRecorder.m; sourceTree = "<group>"; };
 		07A2CD8917EFAB18001C9458 /* AudioSpeedManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AudioSpeedManager.h; sourceTree = "<group>"; };
 		07A2CD8A17EFAB18001C9458 /* AudioSpeedManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AudioSpeedManager.m; sourceTree = "<group>"; };
+		07A2CD8C17EFB1B9001C9458 /* VideoPreviewViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VideoPreviewViewController.h; sourceTree = "<group>"; };
+		07A2CD8D17EFB1B9001C9458 /* VideoPreviewViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = VideoPreviewViewController.m; sourceTree = "<group>"; };
 		07A5963617E66DF400B5BA74 /* Dirac.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Dirac.h; sourceTree = "<group>"; };
 		07A5963717E66DF400B5BA74 /* libDIRAC_iOS-fat.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = "libDIRAC_iOS-fat.a"; sourceTree = "<group>"; };
 		07A5963817E66DF400B5BA74 /* libDIRAC_iOS4-fat.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = "libDIRAC_iOS4-fat.a"; sourceTree = "<group>"; };
@@ -184,6 +187,8 @@
 				07BA3DCB17D4559E00C562BE /* ViewController.h */,
 				07BA3DCC17D4559E00C562BE /* ViewController.m */,
 				07BA3DB417D4559D00C562BE /* Supporting Files */,
+				07A2CD8C17EFB1B9001C9458 /* VideoPreviewViewController.h */,
+				07A2CD8D17EFB1B9001C9458 /* VideoPreviewViewController.m */,
 			);
 			path = Cinesnap;
 			sourceTree = "<group>";
@@ -341,6 +346,7 @@
 				070B452417E6B05100ED7D73 /* EAFWrite.mm in Sources */,
 				070B452717E6BC2D00ED7D73 /* EAFRead.mm in Sources */,
 				07A2CD8B17EFAB18001C9458 /* AudioSpeedManager.m in Sources */,
+				07A2CD8E17EFB1B9001C9458 /* VideoPreviewViewController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

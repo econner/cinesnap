@@ -428,19 +428,6 @@ bail:
 			[[self delegate] captureManager:self didFailWithError:error];
 		}
 	}
-}	
-
-@end
-
-
-#pragma mark -
-@implementation AVCamCaptureManager (RecorderDelegate)
-
--(void)recorderRecordingDidBegin:(AVCamRecorder *)recorder
-{
-    if ([[self delegate] respondsToSelector:@selector(captureManagerRecordingBegan:)]) {
-        [[self delegate] captureManagerRecordingBegan:self];
-    }
 }
 
 +(NSString *)generateTempFilePath:(NSString *)extension
@@ -464,131 +451,138 @@ bail:
     return [tempDirectoryPath stringByAppendingPathComponent:filename];
 }
 
+@end
+
+
+#pragma mark -
+@implementation AVCamCaptureManager (RecorderDelegate)
+
+-(void)recorderRecordingDidBegin:(AVCamRecorder *)recorder
+{
+    if ([[self delegate] respondsToSelector:@selector(captureManagerRecordingBegan:)]) {
+        [[self delegate] captureManagerRecordingBegan:self];
+    }
+}
+
 -(void)recorder:(AVCamRecorder *)recorder recordingDidFinishToOutputFileURL:(NSURL *)outputFileURL error:(NSError *)error
 {
-	if ([[self recorder] recordsAudio] && ![[self recorder] recordsVideo]) {
-		// If the file was created on a device that doesn't support video recording, it can't be saved to the assets 
-		// library. Instead, save it in the app's Documents directory, whence it can be copied from the device via
-		// iTunes file sharing.
-		[self copyFileToDocuments:outputFileURL];
+    double videoScaleFactor = 0.5;
 
-		if ([[UIDevice currentDevice] isMultitaskingSupported]) {
-			[[UIApplication sharedApplication] endBackgroundTask:[self backgroundRecordingID]];
-		}		
+    AVURLAsset* videoAsset = [[AVURLAsset alloc] initWithURL:outputFileURL options:NULL];
+    
+    AVAssetTrack *videoAssetTrack = [[videoAsset tracksWithMediaType:AVMediaTypeVideo] objectAtIndex:0];
+    
+    
+    CMTime videoDuration = videoAsset.duration;
+    CMTime newVideoDuration = CMTimeMake(videoDuration.value * videoScaleFactor, videoDuration.timescale);
+    
+    // Fix the orientation of the video by making the preferred transform (rotate 90 degrees) and re-scaling
+    AVMutableVideoCompositionLayerInstruction *layerInstruction =
+    [AVMutableVideoCompositionLayerInstruction videoCompositionLayerInstructionWithAssetTrack:videoAssetTrack];
+    CGFloat scaleRatio = 320.0 / videoAssetTrack.naturalSize.height;
+    CGAffineTransform scaleTransform = CGAffineTransformMakeScale(scaleRatio, scaleRatio);
+    CGAffineTransform prefToScaleTransform = CGAffineTransformConcat(videoAssetTrack.preferredTransform, scaleTransform);
+    // The capture view is 320x320 and crops out the exact middle of the entire capture screen, which captures the main UIScreen.
+    // We need to translate the capture view upwards to align with the window, which starts at the top of the main screen.
+    CGAffineTransform translateTransform = CGAffineTransformMakeTranslation(0, -([[UIScreen mainScreen] bounds].size.height - 320) / 2.0);
+    CGAffineTransform scaleAndTransTransform = CGAffineTransformConcat(prefToScaleTransform, translateTransform);
+    [layerInstruction setTransform:scaleAndTransTransform atTime:kCMTimeZero];
+    
+    // Set up the main video composition, which includes the layer instruction for fixing the orientation
+    AVMutableVideoComposition *mainComposition = [AVMutableVideoComposition videoComposition];
+    AVMutableVideoCompositionInstruction *mainInstruction = [AVMutableVideoCompositionInstruction videoCompositionInstruction];
+    mainInstruction.layerInstructions = [NSArray arrayWithObject:layerInstruction];
+    mainInstruction.timeRange = CMTimeRangeMake(kCMTimeZero, newVideoDuration);
+    mainComposition.instructions = [NSArray arrayWithObject:mainInstruction];
+    mainComposition.frameDuration = newVideoDuration;
+    mainComposition.renderSize = CGSizeMake(320, 320);
+    
+    
+    // Scale the audio track by the appropriate factor.
+    AVAssetTrack *audioAssetTrack = [[videoAsset tracksWithMediaType:AVMediaTypeAudio] objectAtIndex:0];
+    
+    NSURL* transformedAudioUrl = [self.audioManager transformAudioTrack:audioAssetTrack byFactor:videoScaleFactor];
+    NSLog(@"Returned URL: %@", transformedAudioUrl);
+    AVURLAsset* transformedAudioAsset = [[AVURLAsset alloc] initWithURL:transformedAudioUrl options:NULL];
+    AVAssetTrack *transformedAudioAssetTrack = [[transformedAudioAsset tracksWithMediaType:AVMediaTypeAudio] objectAtIndex:0];
+    CMTime audioDuration = transformedAudioAsset.duration;
+    
+    CMTimeShow(audioDuration);
+    
+    
+    // Create mutable composition
+    AVMutableComposition *mixComposition = [AVMutableComposition composition];
+    
+    AVMutableCompositionTrack *compositionVideoTrack = [mixComposition addMutableTrackWithMediaType:AVMediaTypeVideo
+                                                                                   preferredTrackID:kCMPersistentTrackID_Invalid];
+    AVMutableCompositionTrack *compositionAudioTrack = [mixComposition addMutableTrackWithMediaType:AVMediaTypeAudio
+                                                                                   preferredTrackID:kCMPersistentTrackID_Invalid];
+    
+    
+    
+    NSError *videoInsertError = nil;
+    BOOL videoInsertResult = [compositionVideoTrack insertTimeRange:CMTimeRangeMake(kCMTimeZero, videoDuration)
+                                                            ofTrack:videoAssetTrack
+                                                             atTime:kCMTimeZero
+                                                              error:&videoInsertError];
 
-		if ([[self delegate] respondsToSelector:@selector(captureManagerRecordingFinished:)]) {
-			[[self delegate] captureManagerRecordingFinished:self];
-		}
-	} else {
-        double videoScaleFactor = 0.5;
-
-        AVURLAsset* videoAsset = [[AVURLAsset alloc] initWithURL:outputFileURL options:NULL];
-        
-        AVAssetTrack *videoAssetTrack = [[videoAsset tracksWithMediaType:AVMediaTypeVideo] objectAtIndex:0];
-        
-        // Scale the audio track by the appropriate factor.
-        AVAssetTrack *audioAssetTrack = [[videoAsset tracksWithMediaType:AVMediaTypeAudio] objectAtIndex:0];
-        
-        NSURL* transformedAudioUrl = [self.audioManager transformAudioTrack:audioAssetTrack byFactor:videoScaleFactor];
-        NSLog(@"Returned URL: %@", transformedAudioUrl);
-        AVURLAsset* transformedAudioAsset = [[AVURLAsset alloc] initWithURL:transformedAudioUrl options:NULL];
-        AVAssetTrack *transformedAudioAssetTrack = [[transformedAudioAsset tracksWithMediaType:AVMediaTypeAudio] objectAtIndex:0];
-        CMTime audioDuration = transformedAudioAsset.duration;
-        
-        CMTimeShow(audioDuration);
-        
-        CMTime videoDuration = videoAsset.duration;
-        
-        // Create mutable composition
-        AVMutableComposition *mixComposition = [AVMutableComposition composition];
-        
-        AVMutableCompositionTrack *compositionVideoTrack = [mixComposition addMutableTrackWithMediaType:AVMediaTypeVideo
-                                                                                       preferredTrackID:kCMPersistentTrackID_Invalid];
-        AVMutableCompositionTrack *compositionAudioTrack = [mixComposition addMutableTrackWithMediaType:AVMediaTypeAudio
-                                                                                       preferredTrackID:kCMPersistentTrackID_Invalid];
-        
-        CMTime newVideoDuration = CMTimeMake(videoDuration.value * videoScaleFactor, videoDuration.timescale);
-        
-        NSError *videoInsertError = nil;
-        BOOL videoInsertResult = [compositionVideoTrack insertTimeRange:CMTimeRangeMake(kCMTimeZero, videoDuration)
-                                                                ofTrack:videoAssetTrack
-                                                                 atTime:kCMTimeZero
-                                                                  error:&videoInsertError];
-
-        if (!videoInsertResult || nil != videoInsertError) {
-            // TODO: handle error
-            return;
-        }
-        
-        [compositionVideoTrack scaleTimeRange:CMTimeRangeMake(kCMTimeZero, videoDuration)
-                                   toDuration:newVideoDuration];
-        
-        CMTime newAudioDuration = [compositionVideoTrack.asset duration];
-        
-        NSError *audioInsertError = nil;
-        BOOL audioInsertResult = [compositionAudioTrack insertTimeRange:CMTimeRangeMake(kCMTimeZero, newAudioDuration)
-                                                                ofTrack:transformedAudioAssetTrack
-                                                                 atTime:kCMTimeZero
-                                                                  error:&audioInsertError];
-        
-        if (!audioInsertResult || nil != audioInsertError) {
-            // TODO: handle error
-            return;
-        }
-        
-        // Fix the orientation of the video by making the preferred transform (rotate 90 degrees) and re-scaling
-        AVMutableVideoCompositionLayerInstruction *layerInstruction =
-            [AVMutableVideoCompositionLayerInstruction videoCompositionLayerInstructionWithAssetTrack:videoAssetTrack];
-        CGFloat scaleRatio = 320.0 / videoAssetTrack.naturalSize.height;
-        CGAffineTransform scaleTransform = CGAffineTransformMakeScale(scaleRatio, scaleRatio);
-        CGAffineTransform prefToScaleTransform = CGAffineTransformConcat(videoAssetTrack.preferredTransform, scaleTransform);
-        // The capture view is 320x320 and crops out the exact middle of the entire capture screen, which captures the main UIScreen.
-        // We need to translate the capture view upwards to align with the window, which starts at the top of the main screen.
-        CGAffineTransform translateTransform = CGAffineTransformMakeTranslation(0, -([[UIScreen mainScreen] bounds].size.height - 320) / 2.0);
-        CGAffineTransform scaleAndTransTransform = CGAffineTransformConcat(prefToScaleTransform, translateTransform);
-        [layerInstruction setTransform:scaleAndTransTransform atTime:kCMTimeZero];
-
-        // Set up the main video composition, which includes the layer instruction for fixing the orientation
-        AVMutableVideoComposition *mainComposition = [AVMutableVideoComposition videoComposition];
-        AVMutableVideoCompositionInstruction *mainInstruction = [AVMutableVideoCompositionInstruction videoCompositionInstruction];
-        mainInstruction.layerInstructions = [NSArray arrayWithObject:layerInstruction];
-        mainInstruction.timeRange = CMTimeRangeMake(kCMTimeZero, newVideoDuration);
-        mainComposition.instructions = [NSArray arrayWithObject:mainInstruction];
-        mainComposition.frameDuration = newVideoDuration;
-        mainComposition.renderSize = CGSizeMake(320, 320);
-        
-        // Export to a temporary path
-        AVAssetExportSession *exportSession = [[AVAssetExportSession alloc] initWithAsset:mixComposition
-                                                                               presetName:AVAssetExportPresetHighestQuality];
-        NSURL *exportUrl = [NSURL fileURLWithPath:[AVCamCaptureManager generateTempFilePath:@".mov"]];
-        [exportSession setOutputURL:exportUrl];
-        [exportSession setOutputFileType:AVFileTypeQuickTimeMovie];
-        exportSession.videoComposition = mainComposition;
-        
-        ALAssetsLibrary *library = [[ALAssetsLibrary alloc] init];
-        
-        [exportSession exportAsynchronouslyWithCompletionHandler:^ {
-            [library writeVideoAtPathToSavedPhotosAlbum:exportUrl
-                                        completionBlock:^(NSURL *assetURL, NSError *error) {
-                                            if (error) {
-                                                if ([[self delegate] respondsToSelector:@selector(captureManager:didFailWithError:)]) {
-                                                    [[self delegate] captureManager:self didFailWithError:error];
-                                                }
-                                            }
-                                            
-                                            if ([[UIDevice currentDevice] isMultitaskingSupported]) {
-                                                [[UIApplication sharedApplication] endBackgroundTask:[self backgroundRecordingID]];
-                                            }
-                                            
-                                            if ([[self delegate] respondsToSelector:@selector(captureManagerRecordingFinished:)]) {
-                                                [[self delegate] captureManagerRecordingFinished:self];
-                                            }
-                                            
-                                            [[NSFileManager defaultManager] removeItemAtURL:exportUrl error:&error];
-                                        }];
-
-        }];
+    if (!videoInsertResult || nil != videoInsertError) {
+        // TODO: handle error
+        return;
     }
+    
+    [compositionVideoTrack scaleTimeRange:CMTimeRangeMake(kCMTimeZero, videoDuration)
+                               toDuration:newVideoDuration];
+    
+    CMTime newAudioDuration = [compositionVideoTrack.asset duration];
+    
+    NSError *audioInsertError = nil;
+    BOOL audioInsertResult = [compositionAudioTrack insertTimeRange:CMTimeRangeMake(kCMTimeZero, newAudioDuration)
+                                                            ofTrack:transformedAudioAssetTrack
+                                                             atTime:kCMTimeZero
+                                                              error:&audioInsertError];
+    
+    if (!audioInsertResult || nil != audioInsertError) {
+        // TODO: handle error
+        return;
+    }
+    
+    // Export to a temporary path
+    AVAssetExportSession *exportSession = [[AVAssetExportSession alloc] initWithAsset:mixComposition
+                                                                           presetName:AVAssetExportPresetHighestQuality];
+    NSURL *exportUrl = [NSURL fileURLWithPath:[AVCamCaptureManager generateTempFilePath:@".mov"]];
+    [exportSession setOutputURL:exportUrl];
+    [exportSession setOutputFileType:AVFileTypeQuickTimeMovie];
+    exportSession.videoComposition = mainComposition;
+    
+    //ALAssetsLibrary *library = [[ALAssetsLibrary alloc] init];
+    
+    [exportSession exportAsynchronouslyWithCompletionHandler:^ {
+//            [library writeVideoAtPathToSavedPhotosAlbum:exportUrl
+//                                        completionBlock:^(NSURL *assetURL, NSError *error) {
+//                                            if (error) {
+//                                                if ([[self delegate] respondsToSelector:@selector(captureManager:didFailWithError:)]) {
+//                                                    [[self delegate] captureManager:self didFailWithError:error];
+//                                                }
+//                                            }
+//                                            
+//                                            if ([[UIDevice currentDevice] isMultitaskingSupported]) {
+//                                                [[UIApplication sharedApplication] endBackgroundTask:[self backgroundRecordingID]];
+//                                            }
+//                                            
+//                                            if ([[self delegate] respondsToSelector:@selector(captureManagerRecordingFinished:)]) {
+//                                                [[self delegate] captureManagerRecordingFinished:self];
+//                                            }
+//
+//                                            [[NSFileManager defaultManager] removeItemAtURL:exportUrl error:&error];
+//                                        }];
+        NSLog(@"CHECKING IF DELEGATE RESPONDS TO SELECTOR");
+        if ([[self delegate] respondsToSelector:@selector(captureManagerRecordingFinished:toUrl:)]) {
+            [[self delegate] captureManagerRecordingFinished:self toUrl:exportUrl];
+        }
+
+    }];
+
 }
 
 @end
