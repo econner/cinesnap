@@ -11,6 +11,7 @@
 #import <MobileCoreServices/UTCoreTypes.h>
 #import <AssetsLibrary/AssetsLibrary.h>
 #import "AVCamCaptureManager.h"
+#import "AudioSpeedManager.h"
 
 @interface VideoPreviewViewController : UIViewController
 
@@ -19,6 +20,7 @@
 @property (strong, nonatomic) AVPlayerLayer *playerLayer;
 @property (strong, nonatomic) AVAsset *asset;
 @property (strong, nonatomic) AVPlayerItem *playerItem;
+@property (strong, nonatomic) AudioSpeedManager *audioManager;
 
 -(id)initWithVideoURL:(NSURL *)aUrl;
 

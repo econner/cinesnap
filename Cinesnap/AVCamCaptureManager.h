@@ -48,7 +48,6 @@
 #import <Foundation/Foundation.h>
 #import <AVFoundation/AVFoundation.h>
 #import "EAFRead.h"
-#import "AudioSpeedManager.h"
 
 @class AVCamRecorder;
 @protocol AVCamCaptureManagerDelegate;
@@ -65,7 +64,6 @@
 @property (nonatomic,assign) id deviceDisconnectedObserver;
 @property (nonatomic,assign) UIBackgroundTaskIdentifier backgroundRecordingID;
 @property (nonatomic,assign) id <AVCamCaptureManagerDelegate> delegate;
-@property (strong, nonatomic) AudioSpeedManager *audioManager;
 
 - (BOOL) setupSession;
 - (void) startRecording;

@@ -143,9 +143,6 @@
 		[[UIDevice currentDevice] beginGeneratingDeviceOrientationNotifications];
 		[notificationCenter addObserver:self selector:@selector(deviceOrientationDidChange) name:UIDeviceOrientationDidChangeNotification object:nil];
 		orientation = AVCaptureVideoOrientationPortrait;
-        
-        // Setup audio manager to control speed of audio recording.
-        self.audioManager = [[AudioSpeedManager alloc] init];
     }
     
     return self;
@@ -466,15 +463,9 @@ bail:
 
 -(void)recorder:(AVCamRecorder *)recorder recordingDidFinishToOutputFileURL:(NSURL *)outputFileURL error:(NSError *)error
 {
-    double videoScaleFactor = 0.5;
-
     AVURLAsset* videoAsset = [[AVURLAsset alloc] initWithURL:outputFileURL options:NULL];
     
     AVAssetTrack *videoAssetTrack = [[videoAsset tracksWithMediaType:AVMediaTypeVideo] objectAtIndex:0];
-    
-    
-    CMTime videoDuration = videoAsset.duration;
-    CMTime newVideoDuration = CMTimeMake(videoDuration.value * videoScaleFactor, videoDuration.timescale);
     
     // Fix the orientation of the video by making the preferred transform (rotate 90 degrees) and re-scaling
     AVMutableVideoCompositionLayerInstruction *layerInstruction =
@@ -492,70 +483,20 @@ bail:
     AVMutableVideoComposition *mainComposition = [AVMutableVideoComposition videoComposition];
     AVMutableVideoCompositionInstruction *mainInstruction = [AVMutableVideoCompositionInstruction videoCompositionInstruction];
     mainInstruction.layerInstructions = [NSArray arrayWithObject:layerInstruction];
-    mainInstruction.timeRange = CMTimeRangeMake(kCMTimeZero, newVideoDuration);
+    mainInstruction.timeRange = CMTimeRangeMake(kCMTimeZero, videoAsset.duration);
     mainComposition.instructions = [NSArray arrayWithObject:mainInstruction];
-    mainComposition.frameDuration = newVideoDuration;
+    mainComposition.frameDuration = videoAsset.duration;
     mainComposition.renderSize = CGSizeMake(320, 320);
     
-    
-    // Scale the audio track by the appropriate factor.
-    AVAssetTrack *audioAssetTrack = [[videoAsset tracksWithMediaType:AVMediaTypeAudio] objectAtIndex:0];
-    
-    NSURL* transformedAudioUrl = [self.audioManager transformAudioTrack:audioAssetTrack byFactor:videoScaleFactor];
-    NSLog(@"Returned URL: %@", transformedAudioUrl);
-    AVURLAsset* transformedAudioAsset = [[AVURLAsset alloc] initWithURL:transformedAudioUrl options:NULL];
-    AVAssetTrack *transformedAudioAssetTrack = [[transformedAudioAsset tracksWithMediaType:AVMediaTypeAudio] objectAtIndex:0];
-    CMTime audioDuration = transformedAudioAsset.duration;
-    
-    CMTimeShow(audioDuration);
-    
-    
-    // Create mutable composition
-    AVMutableComposition *mixComposition = [AVMutableComposition composition];
-    
-    AVMutableCompositionTrack *compositionVideoTrack = [mixComposition addMutableTrackWithMediaType:AVMediaTypeVideo
-                                                                                   preferredTrackID:kCMPersistentTrackID_Invalid];
-    AVMutableCompositionTrack *compositionAudioTrack = [mixComposition addMutableTrackWithMediaType:AVMediaTypeAudio
-                                                                                   preferredTrackID:kCMPersistentTrackID_Invalid];
-    
-    
-    
-    NSError *videoInsertError = nil;
-    BOOL videoInsertResult = [compositionVideoTrack insertTimeRange:CMTimeRangeMake(kCMTimeZero, videoDuration)
-                                                            ofTrack:videoAssetTrack
-                                                             atTime:kCMTimeZero
-                                                              error:&videoInsertError];
-
-    if (!videoInsertResult || nil != videoInsertError) {
-        // TODO: handle error
-        return;
-    }
-    
-    [compositionVideoTrack scaleTimeRange:CMTimeRangeMake(kCMTimeZero, videoDuration)
-                               toDuration:newVideoDuration];
-    
-    CMTime newAudioDuration = [compositionVideoTrack.asset duration];
-    
-    NSError *audioInsertError = nil;
-    BOOL audioInsertResult = [compositionAudioTrack insertTimeRange:CMTimeRangeMake(kCMTimeZero, newAudioDuration)
-                                                            ofTrack:transformedAudioAssetTrack
-                                                             atTime:kCMTimeZero
-                                                              error:&audioInsertError];
-    
-    if (!audioInsertResult || nil != audioInsertError) {
-        // TODO: handle error
-        return;
-    }
-    
     // Export to a temporary path
-    AVAssetExportSession *exportSession = [[AVAssetExportSession alloc] initWithAsset:mixComposition
+    AVAssetExportSession *exportSession = [[AVAssetExportSession alloc] initWithAsset:videoAsset
                                                                            presetName:AVAssetExportPresetHighestQuality];
     NSURL *exportUrl = [NSURL fileURLWithPath:[AVCamCaptureManager generateTempFilePath:@".mov"]];
     [exportSession setOutputURL:exportUrl];
     [exportSession setOutputFileType:AVFileTypeQuickTimeMovie];
     exportSession.videoComposition = mainComposition;
     
-    //ALAssetsLibrary *library = [[ALAssetsLibrary alloc] init];
+//    ALAssetsLibrary *library = [[ALAssetsLibrary alloc] init];
     
     [exportSession exportAsynchronouslyWithCompletionHandler:^ {
 //            [library writeVideoAtPathToSavedPhotosAlbum:exportUrl
