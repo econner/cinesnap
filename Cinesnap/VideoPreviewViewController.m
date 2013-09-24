@@ -80,7 +80,7 @@
 }
 
 - (void)onSliderValueChange:(UISlider *)slider {
-    self.player.rate = [slider value] * 2.0f;
+    self.player.rate = [slider value] * 1.8f  + 0.1f;
 }
 
 - (void)playerItemDidReachEnd:(NSNotification *)notification {
