@@ -9,6 +9,8 @@
 #import "VideoPreviewViewController.h"
 #import "UIColor+FlatUI.h"
 #import "UISlider+FlatUI.h"
+#import "UIFont+FlatUI.h"
+#import "FUIButton.h"
 
 @interface VideoPreviewViewController ()
 @end
@@ -35,30 +37,31 @@
         [self.playerLayer setFrame:viewRect];
         [[self.videoPreviewView layer] addSublayer:self.playerLayer];
         
-        self.slider = [[UISlider alloc] initWithFrame:CGRectMake(0, 400, 320, 100)];
+        CGRect sliderRect = CGRectMake(0, 320, 320, 100);
+        self.slider = [[UISlider alloc] initWithFrame:sliderRect];
+        
+        CGRect doneButtonRect = CGRectMake(80, 420, 160, 100);
+        self.doneButton = [[FUIButton alloc] initWithFrame:doneButtonRect];
+        self.doneButton.buttonColor = [UIColor turquoiseColor];
+        self.doneButton.shadowColor = [UIColor greenSeaColor];
+        self.doneButton.shadowHeight = 3.0f;
+        self.doneButton.cornerRadius = 6.0f;
+        self.doneButton.titleLabel.font = [UIFont boldFlatFontOfSize:16];
+        [self.doneButton setTitle:@"Done"forState:UIControlStateNormal];
+        self.doneButton.titleLabel.font = [UIFont systemFontOfSize:30.0f];
+        [self.doneButton setTitleColor:[UIColor cloudsColor] forState:UIControlStateNormal];
+        [self.doneButton setTitleColor:[UIColor cloudsColor] forState:UIControlStateHighlighted];
 
         [self.view addSubview:self.videoPreviewView];
-        [self.view insertSubview:self.slider belowSubview:self.videoPreviewView];
+        [self.view addSubview:self.slider];
+        [self.view addSubview:self.doneButton];
     }
     return self;
-}
-
-- (void)onSliderValueChange:(UISlider *)slider {
-    self.player.rate = [slider value] * 2.0f;
-}
-
-- (void)playerItemDidReachEnd:(NSNotification *)notification {
-    AVPlayerItem *p = [notification object];
-    [p seekToTime:kCMTimeZero];
 }
 
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-
-    // TODO: make this player rate configurable by user
-    double videoScaleFactor = 0.5f;
-
     
     [self.player play];
     self.player.actionAtItemEnd = AVPlayerActionAtItemEndNone;
@@ -73,12 +76,22 @@
     [self.slider setValue:0.5f];
     [self.slider addTarget:self action:@selector(onSliderValueChange:) forControlEvents:UIControlEventValueChanged];
     
-//    
-//    [self scaleAndWriteVideoToPhotosAlbum:videoScaleFactor];
-//}
-//
-//- (void) scaleAndWriteVideoToPhotosAlbum:(float) videoScaleFactor
-//{
+    [self.doneButton addTarget:self action:@selector(scaleAndWriteVideoToPhotosAlbum) forControlEvents:UIControlEventTouchDown];
+}
+
+- (void)onSliderValueChange:(UISlider *)slider {
+    self.player.rate = [slider value] * 2.0f;
+}
+
+- (void)playerItemDidReachEnd:(NSNotification *)notification {
+    AVPlayerItem *p = [notification object];
+    [p seekToTime:kCMTimeZero];
+}
+
+- (void) scaleAndWriteVideoToPhotosAlbum
+{
+    double videoScaleFactor = 1.0f / self.player.rate;
+
     NSURL *videoAssetUrl = [(AVURLAsset *)self.asset URL];
     AVURLAsset* videoAsset = [[AVURLAsset alloc] initWithURL:videoAssetUrl options:NULL];
     CMTime videoDuration = videoAsset.duration;

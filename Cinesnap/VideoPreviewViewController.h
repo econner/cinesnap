@@ -13,6 +13,7 @@
 #import "AVCamCaptureManager.h"
 #import "AudioSpeedManager.h"
 #import "UISlider+FlatUI.h"
+#import "FUIButton.h"
 
 @interface VideoPreviewViewController : UIViewController
 
@@ -23,6 +24,7 @@
 @property (strong, nonatomic) AVPlayerItem *playerItem;
 @property (strong, nonatomic) AudioSpeedManager *audioManager;
 @property (strong, nonatomic) UISlider *slider;
+@property (strong, nonatomic) FUIButton *doneButton;
 
 -(id)initWithVideoURL:(NSURL *)aUrl;
 
