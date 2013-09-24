@@ -19,6 +19,15 @@
 
 - (void)viewDidLoad
 {
+    [super viewDidLoad];
+}
+
+- (void)viewWillAppear:(BOOL)animated
+{
+    NSLog(@"ViewController:viewWillAppear");
+    if(self.videoCaptureView) {
+        [self.videoCaptureView removeFromSuperview];
+    }
     CGRect viewRect = CGRectMake(0, 0, 320, 320);
     self.videoCaptureView = [[UIView alloc] initWithFrame:viewRect];
     self.videoCaptureView.backgroundColor = [UIColor blueColor];
@@ -27,10 +36,37 @@
     
     UILongPressGestureRecognizer *longPress =
     [[UILongPressGestureRecognizer alloc] initWithTarget:self
-                                            action:@selector(holdAction:)];
+                                                  action:@selector(holdAction:)];
     [self.videoCaptureView addGestureRecognizer:longPress];
     
-    [super viewDidLoad];
+    AVCamCaptureManager *manager = [[AVCamCaptureManager alloc] init];
+    self.captureManager = manager;
+    [self.captureManager setDelegate:self];
+    
+    if ([[self captureManager] setupSession]) {
+        // Create video preview layer and add it to the UI
+        AVCaptureVideoPreviewLayer *newCaptureVideoPreviewLayer = [[AVCaptureVideoPreviewLayer alloc] initWithSession:[[self captureManager] session]];
+        UIView *view = [self videoCaptureView];
+        
+        CALayer *viewLayer = [view layer];
+        [viewLayer setMasksToBounds:YES];
+        
+        CGRect bounds = [view bounds];
+        [newCaptureVideoPreviewLayer setFrame:bounds];
+        
+        [newCaptureVideoPreviewLayer setVideoGravity:AVLayerVideoGravityResizeAspectFill];
+        
+        [viewLayer insertSublayer:newCaptureVideoPreviewLayer below:[[viewLayer sublayers] objectAtIndex:0]];
+        
+        self.captureVideoPreviewLayer = newCaptureVideoPreviewLayer;
+        
+        // Start the session. This is done asychronously since -startRunning doesn't return until the session is running.
+        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+            [[[self captureManager] session] startRunning];
+        });
+    }
+
+
 }
 
 // Create and add the video recording preview window.  In auto layout mode,
@@ -60,12 +96,9 @@
             
             self.captureVideoPreviewLayer = newCaptureVideoPreviewLayer;
             
-            NSLog(@"Finished setting capture video preview layer.");
-            
             // Start the session. This is done asychronously since -startRunning doesn't return until the session is running.
             dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
                 [[[self captureManager] session] startRunning];
-                NSLog(@"Starting capture manager session.");
             });
         }
     }
@@ -107,10 +140,7 @@
 - (void) captureManagerRecordingFinished:(AVCamCaptureManager *)captureManager toUrl:(NSURL *)url
 {
     CFRunLoopPerformBlock(CFRunLoopGetMain(), kCFRunLoopCommonModes, ^(void) {
-        NSLog(@"GOT HERE, RECORDING FINISHED");
         VideoPreviewViewController *previewController = [[VideoPreviewViewController alloc] initWithVideoURL:url];
-        
-        NSLog(@"NAVIGATION VIEW CONTROLLER IS: %@", self.navigationController);
         [self.navigationController pushViewController:previewController animated:YES];
     });
 }

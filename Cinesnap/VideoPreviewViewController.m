@@ -42,10 +42,6 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    NSLog(@"DID GET HERE.");
-
-    NSLog(@"Player time is at: %lld", [self.player currentTime].value);
-
 
     // TODO: make this player rate configurable by user
     double videoScaleFactor = 0.5f;
