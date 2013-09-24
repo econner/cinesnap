@@ -517,7 +517,7 @@ bail:
 //
 //                                            [[NSFileManager defaultManager] removeItemAtURL:exportUrl error:&error];
 //                                        }];
-        NSLog(@"CHECKING IF DELEGATE RESPONDS TO SELECTOR");
+
         if ([[self delegate] respondsToSelector:@selector(captureManagerRecordingFinished:toUrl:)]) {
             [[self delegate] captureManagerRecordingFinished:self toUrl:exportUrl];
         }
