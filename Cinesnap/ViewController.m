@@ -19,7 +19,7 @@
 
 - (void)viewDidLoad
 {
-    CGRect viewRect = CGRectMake(0, 40, 320, 320);
+    CGRect viewRect = CGRectMake(0, 0, 320, 320);
     self.videoCaptureView = [[UIView alloc] initWithFrame:viewRect];
     self.videoCaptureView.backgroundColor = [UIColor blueColor];
     

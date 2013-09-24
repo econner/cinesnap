@@ -27,7 +27,7 @@
         self.player = [AVPlayer playerWithPlayerItem:self.playerItem];
         self.playerLayer = [AVPlayerLayer playerLayerWithPlayer:self.player];
 
-        CGRect viewRect = CGRectMake(0, 40, 320, 320);
+        CGRect viewRect = CGRectMake(0, 0, 320, 320);
         self.videoPreviewView = [[UIView alloc] initWithFrame:viewRect];
         self.videoPreviewView.backgroundColor = [UIColor blueColor];
 
