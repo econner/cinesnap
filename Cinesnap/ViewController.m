@@ -20,6 +20,14 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+    
+    NSLog(@"The view did load.");
+    
+    UIBarButtonItem *anotherButton = [[UIBarButtonItem alloc] initWithTitle:@"Feed"
+                                                                      style:UIBarButtonItemStylePlain
+                                                                     target:self
+                                                                     action:@selector(refreshPropertyList:)];
+    self.navigationItem.rightBarButtonItem = anotherButton;
 }
 
 - (void)viewWillAppear:(BOOL)animated
