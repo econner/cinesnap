@@ -12,6 +12,7 @@
 #import <AssetsLibrary/AssetsLibrary.h>
 #import "AVCamCaptureManager.h"
 #import "AudioSpeedManager.h"
+#import "UISlider+FlatUI.h"
 
 @interface VideoPreviewViewController : UIViewController
 
@@ -21,6 +22,7 @@
 @property (strong, nonatomic) AVAsset *asset;
 @property (strong, nonatomic) AVPlayerItem *playerItem;
 @property (strong, nonatomic) AudioSpeedManager *audioManager;
+@property (strong, nonatomic) UISlider *slider;
 
 -(id)initWithVideoURL:(NSURL *)aUrl;
 

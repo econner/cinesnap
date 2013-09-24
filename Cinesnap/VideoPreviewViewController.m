@@ -7,9 +7,10 @@
 //
 
 #import "VideoPreviewViewController.h"
+#import "UIColor+FlatUI.h"
+#import "UISlider+FlatUI.h"
 
 @interface VideoPreviewViewController ()
-
 @end
 
 @implementation VideoPreviewViewController
@@ -33,26 +34,45 @@
 
         [self.playerLayer setFrame:viewRect];
         [[self.videoPreviewView layer] addSublayer:self.playerLayer];
+        
+        self.slider = [[UISlider alloc] initWithFrame:CGRectMake(0, 400, 320, 100)];
 
         [self.view addSubview:self.videoPreviewView];
+        [self.view insertSubview:self.slider belowSubview:self.videoPreviewView];
     }
     return self;
+}
+
+- (void)onSliderValueChange:(UISlider *)slider {
+    self.player.rate = [slider value] * 2.0f;
+}
+
+- (void)playerItemDidReachEnd:(NSNotification *)notification {
+    AVPlayerItem *p = [notification object];
+    [p seekToTime:kCMTimeZero];
 }
 
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    NSLog(@"DID GET HERE.");
-
-    NSLog(@"Player time is at: %lld", [self.player currentTime].value);
-
 
     // TODO: make this player rate configurable by user
     double videoScaleFactor = 0.5f;
 
+    
     [self.player play];
-    self.player.rate = 1.0f / videoScaleFactor;
     self.player.actionAtItemEnd = AVPlayerActionAtItemEndNone;
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(playerItemDidReachEnd:)
+                                                 name:AVPlayerItemDidPlayToEndTimeNotification
+                                               object:[self.player currentItem]];
+    
+    [self.slider configureFlatSliderWithTrackColor:[UIColor silverColor]
+                                     progressColor:[UIColor alizarinColor]
+                                        thumbColor:[UIColor pomegranateColor]];
+    [self.slider setValue:0.5f];
+    [self.slider addTarget:self action:@selector(onSliderValueChange:) forControlEvents:UIControlEventValueChanged];
+    
 //    
 //    [self scaleAndWriteVideoToPhotosAlbum:videoScaleFactor];
 //}

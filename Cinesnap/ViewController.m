@@ -15,6 +15,7 @@
 @interface ViewController (AVCamCaptureManagerDelegate) <AVCamCaptureManagerDelegate>
 @end
 
+
 @implementation ViewController
 
 - (void)viewDidLoad
@@ -29,7 +30,7 @@
     [[UILongPressGestureRecognizer alloc] initWithTarget:self
                                             action:@selector(holdAction:)];
     [self.videoCaptureView addGestureRecognizer:longPress];
-    
+        
     [super viewDidLoad];
 }
 
